@@ -93,7 +93,10 @@ double Point3D::operator^ (const Point3D &other) const
 	return result;
 } 
 
+/********************************************************/
 
+/***Plane Class***/
+/********************************************************/
 class Plane
 {
 public:
@@ -166,9 +169,51 @@ void Convex3D::AddPointP(int p, int a, int b)
 }
 bool Convex3D::CreateOriginTetrahedron()
 {
+	bool success = false;
 	for (int i = 1; i < n; i++)
 	{
-		Point3D p;
-		p.Dist(points[0], points[i]);
+		if (Dist(points[0], points[i]) > ERROR)
+		{
+			swap(points[1], points[i]);
+			success = true;
+			break;
+		}
+	}
+	if (!success)
+	{
+		return success;
+	}
+	success = false;
+	for (int i = 2; i < n; i++)
+	{
+		if (Area(points[0], points[1], points[i]) > ERROR)
+		{
+			swap(points[2], points[i]);
+			success = true;
+			break;
+		}
+	}
+	if (!success)
+	{
+		return success;
+	}
+	success = false;
+	for (int i = 3; i < n; i++)
+	{
+		if (Volume(points[0], points[1], points[2], points[i]) > ERROR)
+		{
+			swap(points[3], points[i]);
+			success = true;
+			break;
+		}
+	}
+	if (!success)
+	{
+		return success;
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
+
 	}
 }
