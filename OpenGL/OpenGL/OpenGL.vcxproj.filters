@@ -18,17 +18,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="application.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="ConvexHull.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="Source.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceVer2.cpp">
-      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
