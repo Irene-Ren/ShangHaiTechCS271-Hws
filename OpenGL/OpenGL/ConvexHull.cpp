@@ -8,6 +8,29 @@ const int MAX_NUM = 2021;
 
 /***A 3D Point Class***/
 /********************************************************/
+double Mod(Point3D a)
+{
+	return sqrt(a.m_x * a.m_x + a.m_y * a.m_y + a.m_z * a.m_z);
+}
+double Dist(Point3D a, Point3D b)
+{
+	Point3D vector = a - b;
+	Mod(vector);
+}
+double Area(Point3D a, Point3D b, Point3D c)
+{
+	Point3D vector1 = b - a;
+	Point3D vector2 = c - a;
+	double area = Mod(vector1 * vector2) / 2.0;
+}
+double Volume(Point3D a, Point3D b, Point3D c, Point3D d)
+{
+	Point3D vector1 = b - a;
+	Point3D vector2 = c - a;
+	Point3D vector3 = d - a;
+	double volume = abs(((vector1 * vector2) ^ vector3) / 6.0);
+	return volume;
+}
 class Point3D
 {
 public:
@@ -20,20 +43,12 @@ public:
 	Point3D operator* (const Point3D &other) const;
 	//Dot product
 	double operator^ (const Point3D &other) const;
-	~Point3D();
-	double operator/ (const Point3D &other) const;
+	~Point3D() {};
 
-private:
 	double m_x;
 	double m_y;
 	double m_z;
 };
-
-
-Point3D::~Point3D()
-{
-}
-
 Point3D Point3D::operator= (const Point3D &other)
 {
 	(*this).m_x = other.m_x;
@@ -76,7 +91,7 @@ double Point3D::operator^ (const Point3D &other) const
 		(*this).m_y*other.m_y + (*this).m_z * other.m_z;
 	
 	return result;
-}
+} 
 
 
 class Plane
@@ -101,7 +116,7 @@ public:
 	~Convex3D() {};
 	bool IsVisibleToP(Point3D& p, Plane& f);
 	void AddPointP(int p, int a, int b);
-	void CreateOriginTetrahedron()
+	bool CreateOriginTetrahedron();
 private:
 	int n; /*total number of real vertex*/
 	Point3D points[MAX_NUM];/*Array contains all the points*/
@@ -147,5 +162,13 @@ void Convex3D::AddPointP(int p, int a, int b)
 			triangleNum += 1;
 			triangleF[triangleNum] = newFace;
 		}
+	}
+}
+bool Convex3D::CreateOriginTetrahedron()
+{
+	for (int i = 1; i < n; i++)
+	{
+		Point3D p;
+		p.Dist(points[0], points[i]);
 	}
 }
