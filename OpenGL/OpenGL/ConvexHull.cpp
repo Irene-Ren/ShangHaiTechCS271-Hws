@@ -2,7 +2,7 @@
 #include<math.h>
 
 using namespace std;
-const int MAX_NUM = 2021;
+const int MAX_NUM = 50;
 #define ERROR 0
 /********************************************************/
 
@@ -98,6 +98,7 @@ public:
 	bool IsVisibleToP(Point3D& p, Plane& f);
 	void AddPointP(int p, int a, int b);
 	bool CreateOriginTetrahedron();
+	void ExtendConvexHull();
 
 	int n; /*total number of real vertex*/
 	Point3D points[MAX_NUM];/*Array contains all the points*/
@@ -173,17 +174,20 @@ double Volume(Point3D a, Point3D b, Point3D c, Point3D d)
 bool Convex3D::CreateOriginTetrahedron()
 {
 	bool success = false;
+	cout << "HELLO" << endl;
 	for (int i = 1; i < n; i++)
 	{
 		if (Dist(points[0], points[i]) > ERROR)
 		{
 			swap(points[1], points[i]);
 			success = true;
+			cout << "Found the point!!!" << endl;
 			break;
 		}
 	}
 	if (!success)
 	{
+		cout << "Same vertex" << endl;
 		return success;
 	}
 	success = false;
@@ -193,11 +197,13 @@ bool Convex3D::CreateOriginTetrahedron()
 		{
 			swap(points[2], points[i]);
 			success = true;
+			cout << "Found the Edge!!!" << endl;
 			break;
 		}
 	}
 	if (!success)
 	{
+		cout << "Same edge" << endl;
 		return success;
 	}
 	success = false;
@@ -207,11 +213,13 @@ bool Convex3D::CreateOriginTetrahedron()
 		{
 			swap(points[3], points[i]);
 			success = true;
+			cout << "Found the face!!!" << endl;
 			break;
 		}
 	}
 	if (!success)
 	{
+		cout << "Same face" << endl;
 		return success;
 	}
 
@@ -232,21 +240,21 @@ bool Convex3D::CreateOriginTetrahedron()
 
 	if (!IsVisibleToP(points[2], p2))
 	{
-		swap(p1.v2, p1.v3);
+		swap(p2.v2, p2.v3);
 	}
-	orderedPlanes[p1.v1][p1.v2] = triangleNum;
-	orderedPlanes[p1.v2][p1.v3] = triangleNum;
-	orderedPlanes[p1.v3][p1.v1] = triangleNum;
+	orderedPlanes[p2.v1][p2.v2] = triangleNum;
+	orderedPlanes[p2.v2][p2.v3] = triangleNum;
+	orderedPlanes[p2.v3][p2.v1] = triangleNum;
 	triangleF[triangleNum] = p2;
 	triangleNum += 1;
 
 	if (!IsVisibleToP(points[1], p3))
 	{
-		swap(p1.v2, p1.v3);
+		swap(p3.v2, p3.v3);
 	}
-	orderedPlanes[p1.v1][p1.v2] = triangleNum;
-	orderedPlanes[p1.v2][p1.v3] = triangleNum;
-	orderedPlanes[p1.v3][p1.v1] = triangleNum;
+	orderedPlanes[p3.v1][p3.v2] = triangleNum;
+	orderedPlanes[p3.v2][p3.v3] = triangleNum;
+	orderedPlanes[p3.v3][p3.v1] = triangleNum;
 	triangleF[triangleNum] = p3;
 	triangleNum += 1;
 
@@ -262,12 +270,26 @@ bool Convex3D::CreateOriginTetrahedron()
 
 	return success;
 }
+void Convex3D::ExtendConvexHull()
+{
+	for (int i = 4; i < n; i++)
+	{
+		for (int j = 0; j < triangleNum; j++)
+		{
+			if (IsVisibleToP(points[i], triangleF[j]))
+			{
+
+			}
+		}
+	}
+}
 
 int main()
 {
 	int n;
 	Convex3D convexHull;
 	cin >> n;
+	convexHull.n = n;
 	for (int i = 0; i < n; i++)
 	{
 		cin >> convexHull.points[i].m_x >> convexHull.points[i].m_y >> convexHull.points[i].m_z;
@@ -288,5 +310,10 @@ int main()
 			cout << endl;
 		}
 	}
+	else
+	{
+		cout << "ERROE";
+	}
+	system("pause");
 	return 0;
 }
