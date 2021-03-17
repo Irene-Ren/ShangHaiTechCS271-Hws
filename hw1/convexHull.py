@@ -64,7 +64,7 @@ class Convex3D:
         return Point3D.DotProduct(Point3D.CrossProduct(vector1, vector2), vector3)
 
     def AddPointP(self, p,a,b):
-        print("Current vertex: ",[self.points[p].m_x, self.points[p].m_y,self.points[p].m_z])
+        # print("Current vertex: ",[self.points[p].m_x, self.points[p].m_y,self.points[p].m_z])
         face = self.orderedFaces[a][b]
         if self.triangleF[face].is_hull:
             print("Current Face: ", [self.points[self.triangleF[face].v1].m_x,self.points[self.triangleF[face].v1].m_y,self.points[self.triangleF[face].v1].m_z], 
@@ -72,7 +72,7 @@ class Convex3D:
                                     [self.points[self.triangleF[face].v3].m_x,self.points[self.triangleF[face].v3].m_y,self.points[self.triangleF[face].v3].m_z])
             print(self.DirectedVolume(self.points[p],self.triangleF[face]))
             if self.DirectedVolume(self.points[p],self.triangleF[face]) >  ERROR:
-                print("Visible to P")
+                # print("Visible to P")
                 self.ExtendVisiblePlane(p, face)
             else:
                 newFace = Face(b,a,p,True)
@@ -138,13 +138,20 @@ class Convex3D:
         return success
     def ExtendConvexHull(self):
         for i in range(4,self.n):
-            for j in range(self.triangleNum):
+            for j in range(len(self.triangleF)):
                 if self.triangleF[j].is_hull and self.DirectedVolume(self.points[i], self.triangleF[j]) > ERROR:
                     self.ExtendVisiblePlane(i,j)
                     break
+        print(len(convexHull.triangleF))
+        for f in convexHull.triangleF:
+            print("Not deleted Faces: ",[convexHull.points[f.v1].m_x,convexHull.points[f.v1].m_y,convexHull.points[f.v1].m_z],
+                            [convexHull.points[f.v2].m_x,convexHull.points[f.v2].m_y,convexHull.points[f.v2].m_z],
+                            [convexHull.points[f.v3].m_x,convexHull.points[f.v3].m_y,convexHull.points[f.v3].m_z])
+        
         for face in self.triangleF:
             if not face.is_hull:
                 self.triangleF.remove(face)
+        # print(len(self.triangleF))
 def Mod(a):
     return np.sqrt(a.m_x * a.m_x + a.m_y * a.m_y + a.m_z * a.m_z)
 def Dist(a, b):
@@ -161,21 +168,36 @@ def Volume(a, b, c, d):
     return volume
 
 if __name__ == "__main__":
-    file_name = raw_input() or "test"
-    matrix = np.loadtxt(file_name, dtype = 'float')
+    # file_name = raw_input() or "Wooden chair.ply"
+    # model = o3d.io.read_triangle_mesh(file_name)
+    # model = model.sample_points_uniformly(number_of_points=50)
+    # matrix = np.asarray(model.points, dtype = 'float')
+    
+    ptcloud = o3d.geometry.PointCloud()
+    ptcloud.points = o3d.utility.Vector3dVector(np.random.randn(20,3))
+    matrix = np.asarray(ptcloud.points, dtype = 'double')
+
     convexHull = Convex3D()
     convexHull.n = np.size(matrix, axis = 0)
     # TODO: If the first row do not contain exactly one float, tell n is missing
     for i in range(convexHull.n):
         convexHull.points.append(Point3D(matrix[i][0],matrix[i][1],matrix[i][2]))
     if convexHull.CreateOriginTetrahedron():
-        print("Extending ConvexHull")
+        # print("Extending ConvexHull")
         convexHull.ExtendConvexHull()
+
+        for face in convexHull.triangleF:
+            if not face.is_hull:
+                convexHull.triangleF.remove(face)
+
+        print(len(convexHull.triangleF))
         for f in convexHull.triangleF:
             print("Calculated Faces: ",[convexHull.points[f.v1].m_x,convexHull.points[f.v1].m_y,convexHull.points[f.v1].m_z],
                             [convexHull.points[f.v2].m_x,convexHull.points[f.v2].m_y,convexHull.points[f.v2].m_z],
                             [convexHull.points[f.v3].m_x,convexHull.points[f.v3].m_y,convexHull.points[f.v3].m_z])
-
+    for face in convexHull.triangleF:
+            if not face.is_hull:
+                convexHull.triangleF.remove(face)
     tri_faces = []
     for f in convexHull.triangleF:
         tri_faces.append([f.v1, f.v2, f.v3])
