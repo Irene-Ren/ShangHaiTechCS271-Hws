@@ -110,6 +110,16 @@ class Convex3D:
             for i in range(4, len(self.points)):
                 self.AddPointP(hull, i)
         return hull
+    def ExtractHullPoints(self):
+        vertSet = []
+        for f in self.triangleF:
+            if self.points[f.v1] not in vertSet:
+                vertSet.append(self.points[f.v1])
+            if self.points[f.v2] not in vertSet:
+                vertSet.append(self.points[f.v2])
+            if self.points[f.v3] not in vertSet:
+                vertSet.append(self.points[f.v3])
+        return vertSet
     def ExtractHullEdges(self):
         edgeSet = []
         for f in self.triangleF:
@@ -152,6 +162,14 @@ def PointFaceDistance(points, p, f):
     vector3 = Point3D.Minus(p, points[f.v1])
     return abs(Point3D.DotProduct(normal, vector3))
 def CollisionDetection(hull_1, hull_2, persision):
+    # deal with the problem that one convex hull encircle another, or no edges detected crossing plane
+    combinedConvex = Convex3D()
+    combinedConvex.points = hull_1.points + hull_2.points
+    combinedConvex.ExtendConvexHull()
+    if TotalVolume(hull_1) + TotalVolume(hull_2) >= TotalVolume(combinedConvex):
+        print("Collide")
+        return
+    # edge crossing planes
     edges1 = hull_1.ExtractHullEdges()
     edges2 = hull_2.ExtractHullEdges()
     isCollision1 = False
