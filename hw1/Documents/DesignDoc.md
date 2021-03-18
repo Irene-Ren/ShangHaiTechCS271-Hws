@@ -189,3 +189,71 @@
   - 10000 points: 4.90024995803833 s
 
 ### Problem 2: Collision Detection for two convex hulls
+
+##### Algorithm and visualizations
+
+- The basic idea of the detection is to see if any edge on one hull will intersect with any plane on the other hull. **I do not consider only one point/edge/face coincide with each other as collisions, only two hulls intersected are considered collide with each other**
+
+  - Testcase 1: two hulls with only one point concides
+
+  - <figure class="half">
+        <img src="colVis2_1.png" style="zoom:40%;" /><img src="colVis2_2.png" style="zoom:80%;" />
+    </figure>
+
+- **hull.triangleNum** can get a **list<Face> ** of all the hull faces, and **ExtractHullEdges()** can get a **list<Tuple(Point3D, Point3D)>** of all the unrepeatative edges of the convex hull.
+
+- For some special cases, like one convex hull completely encircles another convex hull, or there are no edges intersection but there are point inside another hull, we calculate the volume of a **combined hull** (its point cloud is hull1.points + hull2.points), if **Volume(combinedHull) >= Volume(hull1) + Volume(hull2)**, we can say that two hulls are intersected
+
+  - Testcase 2: One hull encircle another hull completely
+
+  - <figure class="half">
+        <img src="colVis5_1.png" style="zoom:40%;" /><img src="colVis5_2.png" style="zoom:80%;" />
+    </figure>
+
+  - Testcase 3: Two hulls do not have edge intersection, but there is a point intersection
+
+  - <figure class="half">
+        <img src="colVis6_1.png" style="zoom:40%;" /><img src="colVis6_2.png" style="zoom:80%;" />
+    </figure>
+
+- For each **f<Face>** in **hull.triangleNum**, we check for each edge **e<Tuple(Point3D, Point3D)>** to see if its two points has different sign of **DirectedVolume()**, if so, it may indicate two hulls intersected, we can be more sure if we do this process in reverse way, that is to say, we use hull that has been extracted with edges be extracted by face, hull that has been extracted with face be extracted by edges
+
+- To Judge if two points of an edge has different sign of **DirectedVolume()**, there is a case that the edge go across the whole another convex hull, in this case we need to truncate the edge, use middle point and one point that is closer to plane as new edge for judgement, truncate time can be determined by parameter **persision**
+
+  - Testcase 4: Two hulls that collide, there are points on one hull inside another hull
+
+  - <figure class="half">
+        <img src="colVis3_1.png" style="zoom:35%;" /><img src="colVis3_2.png" style="zoom:80%;" />
+    </figure>
+
+  - Testcase 5: Two hulls that collide, there are no points on one hull inside another hull
+
+  - <figure class="half">
+        <img src="colVis4_1.png" style="zoom:50%;" /><img src="colVis4_2.png" style="zoom:80%;" />
+    </figure>
+
+  - Testcase 6: Two hulls that do not collide
+
+  - <figure class="half">
+        <img src="colVis1_1.png" style="zoom:40%;" /><img src="colVis1_2.png" style="zoom:80%;" />
+    </figure>
+
+##### Time complexity and runtime with incremental number of points
+
+- The time complexity of the algorithm is O(mn^2)
+
+  - For the process of checking intersection of edge and face in two convex hulls, since we need to iterate through all faces of one convex hull, mark its number as **m**, and for the edges, consider number of points in input point cloud (**n**), the largest number of edges is of O(n^2), thus the complexity is O(mn^2)
+  - For other parts of the algorithm, the time complexity all are smaller or eaqual to O(n^2)
+  - Thus time complexity is O(mn^2)
+
+- Runtime within incremental of points, 10 points, 100 points, 1000 points, 10000 points
+
+  - 10 points: 0.017806053161621094 s
+  - 100 points: 0.20910096168518066 s
+  - 1000 points: 3.4112141132354736 s
+  - 10000 points: 27.486409902572632 s
+
+##### Optimizations
+
+- Directly break if volume calculation fits the condition, it will save the time for edge checking and aviod misjudge of collision
+- Directly break if find one edge intersect with a face, for convex hulls, it has little chance of reaching the worst case senario
