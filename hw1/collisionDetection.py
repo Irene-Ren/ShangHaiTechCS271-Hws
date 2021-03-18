@@ -119,7 +119,6 @@ class Convex3D:
                 edgeSet.append((self.points[f.v2], self.points[f.v3]))
             if (self.points[f.v3], self.points[f.v1]) not in edgeSet and (self.points[f.v1], self.points[f.v3]) not in edgeSet:
                 edgeSet.append((self.points[f.v3], self.points[f.v1]))
-        print(len(edgeSet))
         return edgeSet
 def Mod(a):
     return np.sqrt(a.m_x * a.m_x + a.m_y * a.m_y + a.m_z * a.m_z)
@@ -154,28 +153,42 @@ def PointFaceDistance(points, p, f):
     return abs(Point3D.DotProduct(normal, vector3))
 def CollisionDetection(hull_1, hull_2, persision):
     edges1 = hull_1.ExtractHullEdges()
+    edges2 = hull_2.ExtractHullEdges()
+    isCollision1 = False
+    isCollision2 = False
     for f in hull_2.triangleF:
-        print("Origin Face:" ,[hull_2.points[f.v1].m_x, hull_2.points[f.v1].m_y,hull_2.points[f.v1].m_z],
-                            [hull_2.points[f.v2].m_x, hull_2.points[f.v2].m_y,hull_2.points[f.v2].m_z],
-                            [hull_2.points[f.v3].m_x, hull_2.points[f.v3].m_y,hull_2.points[f.v3].m_z])
         for e in edges1:
             a,b = e[0],e[1]
             if hull_2.DirectedVolume(a, f) * hull_2.DirectedVolume(b,f) < 0:
-                print("Origin points on edge:", [a.m_x, a.m_y, a.m_z],[b.m_x, b.m_y, b.m_z])
                 for i in range(persision):
                     midP = Point3D((a.m_x+b.m_x)/2.0,(a.m_y+b.m_y)/2.0,(a.m_z+b.m_z)/2.0) 
-                    print("A distance:", PointFaceDistance(hull_2.points, a, f))
-                    print("B distance:", PointFaceDistance(hull_2.points, b, f))
                     if PointFaceDistance(hull_2.points, a, f) < PointFaceDistance(hull_2.points, b, f):
                         b = midP
                     else:
                         a = midP
-                    print("selected points:",[a.m_x, a.m_y, a.m_z],[b.m_x, b.m_y, b.m_z])
-                
-                print(hull_2.DirectedVolume(a, f),hull_2.DirectedVolume(b,f))
                 if hull_2.DirectedVolume(a, f) * hull_2.DirectedVolume(b,f) < ERROR:
-                    print("Collide")
-                    return
+                    isCollision1 = True
+                    break
+        if isCollision1:
+            break
+    for f in hull_1.triangleF:
+        for e in edges2:
+            a,b = e[0],e[1]
+            if hull_1.DirectedVolume(a, f) * hull_1.DirectedVolume(b,f) < 0:
+                for i in range(persision):
+                    midP = Point3D((a.m_x+b.m_x)/2.0,(a.m_y+b.m_y)/2.0,(a.m_z+b.m_z)/2.0) 
+                    if PointFaceDistance(hull_1.points, a, f) < PointFaceDistance(hull_1.points, b, f):
+                        b = midP
+                    else:
+                        a = midP
+                if hull_1.DirectedVolume(a, f) * hull_1.DirectedVolume(b,f) < ERROR:
+                    isCollision2 = True
+                    break
+        if isCollision2:
+            break
+    if isCollision1 and isCollision2:
+        print("Collide")
+        return
 
     print("No collision")
     return
@@ -202,7 +215,7 @@ if __name__ == "__main__":
 
         Hulls.append(convexHull)
 
-    CollisionDetection(Hulls[0], Hulls[1],1)
+    CollisionDetection(Hulls[0], Hulls[1],3)
 
     HullsGFX = []
     for i in range(numModels):
