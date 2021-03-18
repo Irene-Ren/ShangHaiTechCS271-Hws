@@ -187,3 +187,5 @@
   - 100 points: 0.024116039276123047 s
   - 1000 points: 0.339540958404541 s
   - 10000 points: 4.90024995803833 s
+
+### Problem 2: Collision Detection for two convex hulls
