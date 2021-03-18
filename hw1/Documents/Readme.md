@@ -45,6 +45,12 @@
 - There are two kinds of input ways:
   - Default way: Use the code below to run the code, input two **strings** (including the file's suffix) to console and wait for the result
     - ![](defaultwaycollision.png)
+      - type in `test`, `test2` to see Testcase 6 in Design Doc
+      - type in `test.txt`, `test2.txt` to see Testcase 1 in Design Doc
+      - type in `test.txt`, `test3.txt` to see Testcase 4 in Design Doc
+      - type in `test.txt`, `test4.txt` to see Testcase 5 in Design Doc
+      - type in `test.txt`, `test5.txt` to see Testcase 2 in Design Doc
+      - type in `test.txt`, `test6.txt` to see Testcase 3 in Design Doc
   - Random input: Use the code below to run the code, just start the program and wait for the result
     - ![](randomgencollision.png)
 - For supplement code `collisionDetectionPac.py`, run it with  `python collisionDetectionPac.py`, use default input way, it has flaws that it cannot detect if one convex hull has only one vertex/one edge/one plane collided, or one convex hull completely encircle another convex hull
