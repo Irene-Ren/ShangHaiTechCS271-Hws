@@ -181,7 +181,7 @@
 
   - Thus time complexity is O(n^2)
 
-- Runtime within incremental of points, 10 points, 100 points, 1000 points, 10000 points
+- Runtime within incremental of points, 10 points, 100 points, 1000 points, 10000 points with computer pluged in
 
   - 10 points: 0.0003941059112548828 s
   - 100 points: 0.024116039276123047 s
@@ -246,12 +246,12 @@
   - For other parts of the algorithm, the time complexity all are smaller or eaqual to O(n^2)
   - Thus time complexity is O(mn^2)
 
-- Runtime within incremental of points, 10 points, 100 points, 1000 points, 10000 points
+- Runtime within incremental of points, 10 points, 100 points, 1000 points, 10000 points with computer pluged in
 
-  - 10 points: 0.017806053161621094 s
-  - 100 points: 0.20910096168518066 s
-  - 1000 points: 3.4112141132354736 s
-  - 10000 points: 27.486409902572632 s
+  - 10 points: 0.0050048828125 s
+  - 100 points: 0.11203908920288086 s
+  - 1000 points: 0.9174981117248535 s
+  - 10000 points: 11.32191014289856 s
 
 ##### Optimizations
 
