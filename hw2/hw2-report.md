@@ -8,11 +8,11 @@
 
 ##### Background
 
-Under the large amount of requirements of point cloud reconstruction in computer graphics, medical imaging and cartography, previously there are only heuristic solutions on reconstruction, at this time, there are few papers demonstrating algorithms for the two-dimensional problem with firm guaranteed properties.
+Under the large amount of requirements of point cloud reconstruction in computer graphics, medical imaging and cartography, 
 
-There are some other algorithms
+previously there are only heuristic solutions on reconstruction, at this time, there are few papers demonstrating algorithms for the two-dimensional problem with firm guaranteed properties.
 
-The algorithm relies on an older algorithm, Boissonnat's algorithm, and correct its mistake in even dense sample sets can give Delaunay tetrahedra with circumspheres that are arbitrarily far from the medial axis, which becomes the second observation which motivates the definition of poles.
+The algorithm of this paper relies on an older algorithm, Boissonnat's algorithm, and correct its mistake in even dense sample sets can give Delaunay tetrahedra with circumspheres that are arbitrarily far from the medial axis, which becomes the second observation which motivates the definition of poles.
 
 ##### Method description
 
