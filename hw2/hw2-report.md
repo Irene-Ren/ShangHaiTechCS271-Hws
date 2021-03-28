@@ -39,10 +39,11 @@ The algorithm stands out for the good effect of smoothness in reconstruction pro
 However, it faces some challenges when the amount of sample points is too small. Although the Voronoi Filtering and Filtering by normal will help to remove extra lumps or wrong links within or between models, they can be over reacting when a sufficiently small r occurs for an r-sample, failing to close up polygon holes and forming some sharp corners at the edges. (see the right figure below) 
 
 <figure class="half">
-    <img src="GoodCase.png" style="zoom:70%;" /><img src="BadCase.png" style="zoom:80%;" />
+    <img src="GoodCase.png" style="zoom:60%;" /><img src="BadCase.png" style="zoom:70%;" />
 </figure>
 
-#### My own analysis
+
+#### My own analysis for the paper
 
 ##### Pros and cons
 
