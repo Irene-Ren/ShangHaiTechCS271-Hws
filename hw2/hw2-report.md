@@ -67,11 +67,11 @@ However, it faces some challenges when the amount of sample points is too small.
   - Also, the two methods mentions above do not have guarantees for higher dimensional reconstructions. And the algorithm in this paper is able to reconstruct surface in three dimensional space.
 - **β-skeleton**：
   - It can accept inputs of nonuniform point clouds, and the algorithm in this paper is also capable of that.
-  - Currently β-skeleton is guaranteed to give reconstruction results in two dimensional space, but the direct extension to higher dimensional, like three dimensions, is proved to be wrong for β-skeleton. But the algorithm in this paper can be used for reconstructions of three-dimensional point clouds.
+  - Currently β-skeleton is guaranteed to give reconstruction results in two dimensional space, but the direct extension to higher dimensional, like three dimensions, is proved to be wrong for β-skeleton. And the algorithm in this paper can be used for reconstructions of three-dimensional point clouds.
 
 ##### The future work
 
-- There are two ways for two dimensional curve reconstruction: CRUST(Voronoi filtering) and β-skeleton. In this paper CRUST has been proved to have guaranteed reconstruction quality for three dimensional point cloud reconstruction, it is worth trying to also extend β-skeleton for surface reconstruction in three dimensional space.
+- There are two ways for two dimensional curve reconstruction  that can work with nonuniform point clouds: CRUST(Voronoi filtering) and β-skeleton. In this paper CRUST has been proved to have guaranteed reconstruction quality for three dimensional point cloud reconstruction, it is worth trying to also extend β-skeleton for surface reconstruction in three dimensional space.
 - Currently the reconstruction is limited to three dimensional space, it is worthwhile to extend the algorithm to k-dimension.
 - The numbers of sampling points for input and the universal limitation value of θ for step 5 in the algorithm are not sure, it still needs more experiments and proofs.
 - The algorithm is oriented for smooth surfaces, researches on whether CRUST can be used on reconstructing point clouds with hard corners (like machine parts) will be very contributive.
