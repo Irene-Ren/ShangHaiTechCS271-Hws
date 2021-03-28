@@ -20,13 +20,13 @@ The algorithm of this paper relies on an older algorithm, **Boissonnat's algorit
   - Input: A set of point **S** sampled from the original two-dimensional manifold **F** in three dimensional space
   - Output: A triangular mesh **F'** which possesses **S** as its vertex set, and can converge to **F** in tolerable error.
 - The algorithm and some explanations:
-  - The algorithm is an extension of points reconstruction algorithm **CRUST** published by one of the authors Amenta. It first uses Voronoi to approximate the MAT of sample points **S**, then according to duality, applies the Delaunay to recover the surface of points. The algorithm in this paper gives its innovations on dealing with dense samples by bringing up a new concept "**poles**", which is a correction for over-sensitive areas (the dense sampled point areas). By using poles set **P** instead of using Voronoi graph **V** in **CRUST** with sample points **S** to reconstruct the surface, the new algorithm makes sure the surface in dense-sampled areas acceptably smooth. When finish filtering with both Voronoi and normals, almost all the lumps on the surface will be gone.
+  - The algorithm is an extension of points reconstruction algorithm **CRUST** published by one of the authors Amenta. It first uses Voronoi to approximate the MAT of sample points **S**, then according to duality, applies the Delaunay to recover the surface of points. The algorithm in this paper gives its innovations on dealing with dense samples by bringing up a new concept "**poles**", which is a correction for over-sensitive areas (the dense sampled point areas). By using poles set **P** instead of using Voronoi graph **V** with sample points **S** to reconstruct the surface, the new algorithm makes sure the surface in dense-sampled areas acceptably smooth. When finish filtering with both Voronoi and normals, almost all the lumps on the surface will be gone.
   - When the samples are dense, the Voronoi cell of every sample is **long and skinny**, and they are perpendicular to the surface, thus the two ends at the long skinny direction of Voronoi cell may be too far away from the medial axis, causing the lumps on surface. It is **poles**' job to make corrections to those Voronoi vertices in dense areas.
   - The pseudo code turns out to look like this:
     - Find out the Voronoi diagram for sample points **S**
     - Then traverse through **S**, for point **s** in **S**:
       - If **s** is not on the convex hull of **S** (meaning **s** is not a sample point in an open Voronoi cell), select the Voronoi point **p+** that fulfills: **p+** belongs to Voronoi(**s**), and Distance(**p+**, **s**) is the maximum.
-      - If **s** is on the convex hull of **S** (meaning **s** is a sample point in an open cell of Voronoi), select the point **p+** that fulfills: **p+** is at infinite distance outside the convex hull, and the direction of vector **sp+** is Average of outward normals of all hull faces containing **s**.
+      - If **s** is on the convex hull of **S** (meaning **s** is a sample point in an open cell of Voronoi), select the point **p+** that fulfills: **p+** is at infinite distance outside the convex hull, and the direction of vector **sp+** is the average of outward normals of all hull faces meeting at **s**.
       - When picked **p+**, pick another pole **p-** to be the projection on negative direction of vector **sp+**.
     - Collect all **p+** and **p-** except the ones that are at infinite distance to form a set **P**, apply the Delaunay triangulation of **S AND P**.
     - Remove the triangles that contains points that do not belong to **S**. (**Voronoi Filtering**)
@@ -37,7 +37,7 @@ The algorithm of this paper relies on an older algorithm, **Boissonnat's algorit
 
 The algorithm stands out for the good effect of smoothness in reconstruction process, its unique method of using poles to filter over-dense errors or even noise make great contribution to the research of surface reconstruction. The algorithm also has some robustness for closing up surfaces in free space. (see the left figure below) 
 
-However, it faces some challenges when the amount of sample points is too small. Although the **Voronoi Filtering** and **Filtering by normal** will help to remove extra lumps or wrong links within or between models, they can be over reacting when a sufficiently small r occurs for an r-sample, failing to close up polygon holes and forming some sharp corners at the edges. (see the right figure below) 
+However, it faces some challenges when the amount of sample points is too small. Although the Voronoi Filtering and Filtering by normal will help to remove extra lumps or wrong links within or between models, they can be over reacting when a sufficiently small r occurs for an r-sample, failing to close up polygon holes and forming some sharp corners at the edges. (see the right figure below) 
 
 <figure class="half">
     <img src="GoodCase.png" style="zoom:70%;" /><img src="BadCase.png" style="zoom:80%;" />
@@ -60,15 +60,18 @@ However, it faces some challenges when the amount of sample points is too small.
 
 ##### The comparison with other related methods
 
-α-shapes: Like this algorithm, it is a subcomplex  of the Delaunay, a Delaunay simplex belongs to the α-shape of S if its circumsphere has radius at most α. The major flaw of using α-shapes for surface reconstruction is that the optimal value of α depends on the sampling density, which often varies over different parts of the surface.
-
-Euclidean minimum spanning tree: can be used to reconstruct uniformly sampled curves in the plane. (Figueiredo and Miranda Gomes)
+- **α-shapes** and **Euclidean minimum spanning tree**: 
+  - They all have guarantees to construct two dimensional curves with point clouds. However, the optimal result these two algorithms depends on the sampling density, which often varies over different parts of the surface, so they are bad at dealing with non-even sampled point clouds. The algorithm in this paper is able to accept unevenly spread point clouds and still gives out satisfying outputs. 
+  - Also, the two methods mentions above do not have guarantees for higher dimensional reconstructions. And the algorithm in this paper is able to reconstruct surface in three dimensional space.
+- **β-skeleton**：
+  - It can accept inputs of nonuniform point clouds, and the algorithm in this paper is also capable of that.
+  - Currently β-skeleton is guaranteed to give reconstruction results in two dimensional space, but the direct extension to higher dimensional, like three dimensions, is proved to be wrong for β-skeleton. But the algorithm in this paper can be used for reconstructions of three-dimensional point clouds.
 
 ##### The future work
 
-- There are two ways for two dimensional curve reconstruction: CRUST(Voronoi filtering) and β-skeleton. In this paper CRUST has been proved to have guaranteed reconstruction quality for three dimensional point cloud reconstruction, it is worth trying to also extend β-skeleton for surface reconstruction.
-- Currently the reconstruction is limited to three dimensional, it is worthwhile to extend the algorithm to k-dimension.
-- The numbers of sampling points and the universal limitation value of θ for **Filtering by normal** which can promise to give reliable results are not sure, it still needs more experiments and proofs.
+- There are two ways for two dimensional curve reconstruction: CRUST(Voronoi filtering) and β-skeleton. In this paper CRUST has been proved to have guaranteed reconstruction quality for three dimensional point cloud reconstruction, it is worth trying to also extend β-skeleton for surface reconstruction in three dimensional space.
+- Currently the reconstruction is limited to three dimensional space, it is worthwhile to extend the algorithm to k-dimension.
+- The numbers of sampling points for input and the universal limitation value of θ for step 5 in the algorithm are not sure, it still needs more experiments and proofs.
 - The algorithm is oriented for smooth surfaces, researches on whether CRUST can be used on reconstructing point clouds with hard corners (like machine parts) will be very contributive.
-- The cost of the algorithm is rather high, if some optimizations are made for the algorithm, the algorithm will be able to handle larger point clouds.
+- The cost of the algorithm is rather high, if some optimizations are made, the algorithm may be able to handle larger point clouds.
 
