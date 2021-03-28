@@ -12,15 +12,14 @@ Under the large amount of requirements of point cloud reconstruction in computer
 
 At that time, papers mainly gives heuristic solutions, a few papers provide reconstruction solutions without firm guarantee on accuracy and completeness (Hoppe et al., Curless and Levoy), and few papers offer two dimensional reconstruction algorithm with guarantees (α-shape of Edelsbrunner et al., Euclidean minimum spanning tree). On the purpose of giving an algorithm that is both steady and extensible to higher dimension, this paper is written.
 
-The algorithm of this paper relies on an older algorithm, **Boissonnat's algorithm**, which gives a good instruction that "sculpts" the interior of a geometry with a subset of Delaunay tetrahedra. This gives the first observation for the algorithm that typical Delaunay tetrahedra possesses  circumspheres approximating maximal empty balls whose center is at the points of medial axis. And by correcting Boissonnat's mistake of not considering dense sample sets being able to give Delaunay tetrahedra with circumspheres that are arbitrarily far from the medial axis, the paper obtains its second observation and propose the crucial definition of poles.
-
 ##### Method description
 
 - In this paper, the reconstruction process is specified as follows: 
   - Input: A set of point **S** sampled from the original two-dimensional manifold **F** in three dimensional space
   - Output: A triangular mesh **F'** which possesses **S** as its vertex set, and can converge to **F** in tolerable error.
 - The algorithm and some explanations:
-  - The algorithm is an extension of points reconstruction algorithm **CRUST** published by one of the authors Amenta. It first uses Voronoi to approximate the MAT of sample points **S**, then according to duality, applies the Delaunay to recover the surface of points. The algorithm in this paper gives its innovations on dealing with dense samples by bringing up a new concept "**poles**", which is a correction for over-sensitive areas (the dense sampled point areas). By using poles set **P** instead of using Voronoi graph **V** with sample points **S** to reconstruct the surface, the new algorithm makes sure the surface in dense-sampled areas acceptably smooth. When finish filtering with both Voronoi and normals, almost all the lumps on the surface will be gone.
+  - The algorithm of this paper relies on an older algorithm, **Boissonnat's algorithm**, which gives a good instruction that "sculpts" the interior of a geometry with a subset of Delaunay tetrahedra. This gives the first observation for the algorithm that typical Delaunay tetrahedra possesses  circumspheres approximating maximal empty balls whose center is at the points of medial axis. And by correcting Boissonnat's mistake of not considering dense sample sets being able to give Delaunay tetrahedra with circumspheres that are arbitrarily far from the medial axis, the paper obtains its second observation and propose the crucial definition of poles.
+  - The algorithm first uses Voronoi to approximate the MAT of sample points **S**, then according to duality, applies the Delaunay to recover the surface of points. It stands out from other algorithms on dealing with dense samples by bringing up the concept of "**poles**", which is a correction for over-sensitive areas (the dense sampled point areas). By using poles set **P** instead of using Voronoi points set **V** with sample points **S** to reconstruct the surface, the new algorithm makes sure the surface in dense-sampled areas acceptably smooth. When finish filtering with both Voronoi and normals, almost all the lumps on the surface will be gone.
   - When the samples are dense, the Voronoi cell of every sample is **long and skinny**, and they are perpendicular to the surface, thus the two ends at the long skinny direction of Voronoi cell may be too far away from the medial axis, causing the lumps on surface. It is **poles**' job to make corrections to those Voronoi vertices in dense areas.
   - The pseudo code turns out to look like this:
     - Find out the Voronoi diagram for sample points **S**
@@ -51,11 +50,13 @@ However, it faces some challenges when the amount of sample points is too small.
 
 - Compared to other algorithms at the same time, it had made great progress in obtaining smooth and accurate surface for many point clouds.
 - The algorithm has good robustness in input. It can accept samples whose points spread evenly in the original model space and also samples whose points distributes nonuniformly, which is a great progress considering the actual sampling situation.
-- The algorithm has good robustness in output. Even it is not designed to do closure for open surfaces, it can still give out a satisfying result when dealing with these kind of data. The two filtering process also performs perfectly when facing some extra links between parted models or burrs and lumps in models.
+- The algorithm has good robustness in output. Even it is not designed to do closure for open surfaces, it can still give out a satisfying result when dealing with these kind of data. The two filtering process also performs perfectly when facing some extra links between parted models or burrs and lumps in models.(see the figure below)
+
+<img src="D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw2\roboustness.png" style="zoom:90%;" />
 
 ###### Cons
 
-- Although the algorithm works fine with most of the point clouds, the calculation of Voronoi diagrams is very costly, unfortunately the algorithm doesn't mention any optimizations on Voronoi calculations, thus when facing point clouds with large quantity, the algorithm may be very slow or even fails to handle data.
+- Although the algorithm works fine with most of the point clouds, the calculation of Voronoi diagrams is very costly. Unfortunately the algorithm doesn't mention any optimizations on Voronoi calculations, thus when facing point clouds with large quantity, the algorithm may be very slow or even fails to handle data.
 - The algorithm does well on reconstructing smooth surface, but sample sets with sharp corners will receive bad results including losing correct triangles, getting burrs and so on.
 
 ##### The comparison with other related methods
