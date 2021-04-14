@@ -44,12 +44,12 @@ Before this paper, the main stream method for detections could be classified to 
 
 ##### The comparison with other related methods
 
-- **α-shapes** and **Euclidean minimum spanning tree**: 
-  - They all have guarantees to construct two dimensional curves with point clouds. However, the optimal result these two algorithms depends on the sampling density, which often varies over different parts of the surface, so they are bad at dealing with non-even sampled point clouds. The algorithm in this paper is able to accept unevenly spread point clouds and still gives out satisfying outputs. 
-  - Also, the two methods mentions above do not have guarantees for higher dimensional reconstructions. And the algorithm in this paper is able to reconstruct surface in three dimensional space.
-- **β-skeleton**：
-  - It can accept inputs of nonuniform point clouds, and the algorithm in this paper is also capable of that.
-  - Currently β-skeleton is guaranteed to give reconstruction results in two dimensional space, but the direct extension to higher dimensional, like three dimensions, is proved to be wrong for β-skeleton. And the algorithm in this paper can be used for reconstructions of three-dimensional point clouds.
+- **3D Object Detection with Grid-based Methods**: 
+  - Compared with PV-RCNN, both methods' main idea is to distribute the points into small voxels and process them in 3D CNN.
+  - However, due to the fixed kernel size of 3D convolution, the receptive fields are limited in the traditional grid-based methods. For PV-RCNN, it uses set abstraction operation proposed by a point-based method called PointRCNN, which enables it to have flexible receptive fields for point cloud feature learning, therefore its resolution quality and accuracy of bounding box proposal will be much better than traditional grid-based methods.
+- **3D Object Detection with Point-based Methods**：
+  - PV-RCNN and point-based methods have the similarity in abstracting features
+  - But doing set abstraction directly on the original dataset is rather wasteful in space. PV-RCNN first uses grid-based method to preprocess the point cloud into keypoint features, which is much smaller than the original data size, and give them to point-based method for further calculations. This move will greatly improve the spatial performance.
 
 ##### The future work
 
