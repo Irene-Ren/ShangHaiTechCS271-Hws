@@ -23,6 +23,9 @@ Before this paper, the main stream method for detections could be classified to 
   - The proposed framework works like this:
     - **Keypoint Sampling**: Find the key point set **K** by using the **Furthest-Point-Sampling** (FPS).
     - **Voxel Set Abstraction Module**: Encode the multi-scale semantic features from 3D CNN feature volumes to the keypoints. That is to say, collect the non-zero voxels within the range of $r_k$, and transform them 
+    - 
+
+##### The results based on my own understanding for the paper
 
 - The paper proposes the PV-RCNN method, which perfectly combines the advantages of both grid-based and point-based methods, making great contribution in improving 3D object detection within affordable memory consumption.
 - Brings up the **voxel-to-keypoint** process to compress multiscale voxel features into several key points, which the key points features contains both accurate location and rich scene context, thus improves the detection performance greatly.
@@ -56,3 +59,6 @@ Before this paper, the main stream method for detections could be classified to 
 - The algorithm is now based on pure LiDAR, which contains plenty geometrical information but little contextual information, thus it is worth while to extend the algorithm to use the combination of LiDAR and RGB dataset.
 - The upcoming datasets like Waymo contains almost 4 times more sensing area, which requires more "higher performance" algorithms.
 
+#### Design experiments and show the results
+
+#### Comments on how to improve the method
