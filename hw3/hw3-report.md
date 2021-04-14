@@ -1,22 +1,22 @@
-# Research Survey for the Surface Reconstruction Using Delaunay Triangulation
+# Research Survey for PV-RCNN: Point-Voxel Feature Set Abstraction for 3D Object Detection
 
 #### Paper Title and link
 
-**Surface reconstruction by Voronoi filtering**, https://dl.acm.org/doi/10.1145/276884.276889
+**PV-RCNN: Point-Voxel Feature Set Abstraction for 3D Object Detection**, https://arxiv.org/pdf/1912.13192v1.pdf
 
 #### Retell the paper
 
 ##### Background
 
-Under the large amount of requirements of point cloud reconstruction in computer graphics, medical imaging and cartography, and as Hoppe et al.'s algorithm for the reconstruction brings the problem to the attention of the computer graphics community, the research thrives in this area.
+In the past few years, the rise of autonomous driving and robotics has drawn great attention to 3D object detection. Plenty of methods has already been brought up to serve for realization of detections towards different specific needs, but the updates in hardware provides scientists with more datasets and uncertain factors and the old methods cannot fulfill the needs. Under this condition, the team in this paper propose a new delegate framework.
 
-At that time, papers mainly gives heuristic solutions, a few papers provide reconstruction solutions without firm guarantee on accuracy and completeness (Hoppe et al., Curless and Levoy), and few papers offer two dimensional reconstruction algorithm with guarantees (α-shape of Edelsbrunner et al., Euclidean minimum spanning tree). On the purpose of giving an algorithm that is both steady and extensible to higher dimension, this paper is written.
+Before this paper, the main stream method for detections could be classified to two categories: grid-based and point-based method. However, neither methods can receive "high performance" that is both efficient and accurate, therefore this paper make a combination of the advantages of the two methods by carefully designing the framework to mend each others flaws with the two methods above. The launched code currently performs great on KITTI and Waymo benchmarks. 
 
 ##### Method description
 
 - In this paper, the reconstruction process is specified as follows: 
-  - Input: A set of point **S** sampled from the original two-dimensional manifold **F** in three dimensional space
-  - Output: A triangular mesh **F'** which possesses **S** as its vertex set, and can converge to **F** in tolerable error.
+  - Input: A 3D point cloud dataset **P**
+  - Output: 3D Bounding boxes for target objects in **P**
 - The algorithm and some explanations:
   - The algorithm of this paper relies on an older algorithm, **Boissonnat's algorithm**, which gives a good instruction that "sculpts" the interior of a geometry with a subset of Delaunay tetrahedra. This gives the first observation for the algorithm that typical Delaunay tetrahedra possesses  circumspheres approximating maximal empty balls whose center is at the points of medial axis. And by correcting Boissonnat's mistake of not considering dense sample sets being able to give Delaunay tetrahedra with circumspheres that are arbitrarily far from the medial axis, the paper obtains its second observation and propose the crucial definition of poles.
   - The algorithm first uses Voronoi to approximate the MAT of sample points **S**, then according to duality, applies the Delaunay to recover the surface of points. It stands out from other algorithms on dealing with dense samples by bringing up the concept of "**poles**", which is a correction for over-sensitive areas (the dense sampled point areas). By using poles set **P** instead of using Voronoi points set **V** with sample points **S** to reconstruct the surface, the new algorithm makes sure the surface in dense-sampled areas acceptably smooth. When finish filtering with both Voronoi and normals, almost all the lumps on the surface will be gone.
@@ -34,11 +34,10 @@ At that time, papers mainly gives heuristic solutions, a few papers provide reco
 
 ##### The results based on my own understanding for the paper
 
-The algorithm stands out for the good effect of smoothness in reconstruction process, its unique method of using poles to filter over-dense errors or even noise make great contribution to the research of surface reconstruction. The algorithm also has some robustness for closing up surfaces in free space. (see the left figure below) 
-
-However, it faces some challenges when the amount of sample points is too small. Although the Voronoi Filtering and Filtering by normal will help to remove extra lumps or wrong links within or between models, they can be over reacting when a sufficiently small r occurs for an r-sample, failing to close up polygon holes and forming some sharp corners at the edges. (see the right figure below)
-
-
+- The paper proposes the PV-RCNN method, which perfectly combines the advantages of both grid-based and point-based methods, making great contribution in improving 3D object detection within affordable memory consumption.
+- Brings up the **voxel-to-keypoint** process to compress multiscale voxel features into several key points, which the key points features contains both accurate location and rich scene context, thus improves the detection performance greatly.
+- Propose another process called **ROI-grid pooling** method which converts key points to ROI-grid points for accurate box refinement and confidence prediction. The process improves accuracy because it gets information from multiscale voxels compression thus have multiple receptive fields for box refinement.
+- The launched trained PV_RCNN AI has beaten all previous detection methods, which leads the first place in KITTI 3D detection and Waymo Open dataset.
 
 #### My own analysis for the paper
 
