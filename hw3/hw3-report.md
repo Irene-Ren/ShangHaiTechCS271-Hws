@@ -21,9 +21,19 @@ Before this paper, the main stream method for detections could be classified to 
   - The network is based on **Voxel CNN with 3D sparse convolution**, which divides input points **P** into small voxels and do down sampling with 3D sparse convolution, then convert the down-sampled 3D feature volumes into 2D birdview map to obtain 3D bounding box proposal. However, the Voxel CNN receives low resolution results due to the down sampling, the conventional pooling to obtain features to sparse points will waste much time on computing 0-value results, therefore an alternative is needed for feature extraction.
   - The **set abstraction** has strong capability of obtain feature points from an arbitrary size neighborhood, which perfectly solves the problem mentioned above. But the naive solution using set abstraction by directly aggregate the multi-scale feature to RoI grids is wasteful in space. Thus we need to combine the two methods together for better feature extraction and bounding box proposal process.
   - The proposed framework works like this:
-    - **Keypoint Sampling**: Find the key point set **K** by using the **Furthest-Point-Sampling** (FPS).
-    - **Voxel Set Abstraction Module**: Encode the multi-scale semantic features from 3D CNN feature volumes to the keypoints. That is to say, collect the non-zero voxels within the range of $r_k$, and transform them 
-    - 
+    - **3D Sparse Convolution**: Input the raw point clouds **P** to learn multi-scale semantic features and generate 3D object proposals.
+    - **Voxel Set Abstraction**: Encode the multi-scale semantic features from 3D CNN feature volumes to the keypoints.
+      - **Keypoint Sampling**: Find the key point set **K** by using the **Furthest-Point-Sampling** (FPS).
+      - **Voxel Set Abstraction Module**: 
+        - Find the set of non-empty voxel-wise feature vector of the k-th level $F^{(l_k)} = \{f^{(l_k)}_{1},...,f^{(l_k)}_{N_k}\}$
+        - Also obtain the set of non-empty voxel coordinates calculated by the voxel indices and actual voxel sizes of the k-th level $V^{(l_k)} = \{v^{(l_k)}_{1},...,v^{(l_k)}_{N_k}\}$
+        - For each keypoint $p_i$, gather its neighboring non-empty voxel in the k-th level within radius $r_k$ to get the voxel-wise feature vectors![](D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw3\Sk.png)
+        - Generate feature for each key point $p_i$ as $f^{(pv_k)}_{i} = max\{G(M(S_{i}^{(l_k)}))\}$, where $M()$ means to randomly sample at most $T_k$ voxels within $S^{(l_k)}_{i}$, $G()$ means a multi-layer perceptron network to transform the voxel-wise features and relative locations into feature, we pick max result of all sampled $S^{(l_k)}_{i}$ and match it to key point $p_i$. Then generate the multi-scale semantic feature for the key point $f^{(pv)}_{i} = [f^{(pv_1)}_{i},f^{(pv_2)}_{i},f^{(pv_3)}_{i},f^{(pv_4)}_{i}]$, for $i = 1,...,n$. This will contains both voxel-wise and point-wise features and position information in key point $p_i$ 
+      - **Predicted Keypoint Weighting**: The keypoints belonging to foreground objects should have bigger influence in accurate refinement of proposals. The predicted feature weight for each key point's feature $\widetilde{f}_{i}^{(p)} = A({f}_{i}^{(p)})*{f}_{i}^{(p)}$ , where $A()$ represents a three-layer MLP network with sigmoid function to predict foreground confidence between [0,1]
+    - **RoI-grid Pooling**: the key point features are aggregated to the RoI-grid points. 
+      - Sample grid point set $G = \{g_1, g_2, ...,g_{216}\}$ by using $6*6*6$ unit uniformly. Then aggregate the features of grid point $g_i$ within a radius $\widetilde{r}$![](D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw3\ROIgrid.png)
+      - Then do PointNet-block operation to aggregate the neighboring keypoint feature set for $g_i$ to be $f^{(g)}_{i} = max\{G(M(\Psi))\}$
+    - **3D proposal refinement and confidence prediction**: Given RoI features $f^{(g)}_{i}$ of each box proposal, the network can now judge the bounding boxes' center, size and orientation. Further use a 2-layer MLP to adjust the accuracy for the final prediction.
 
 ##### The results based on my own understanding for the paper
 
