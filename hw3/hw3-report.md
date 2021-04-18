@@ -27,7 +27,7 @@ Before this paper, the main stream method for detections could be classified to 
       - **Voxel Set Abstraction Module**: 
         - Find the set of non-empty voxel-wise feature vector of the k-th level $F^{(l_k)} = \{f^{(l_k)}_{1},...,f^{(l_k)}_{N_k}\}$
         - Also obtain the set of non-empty voxel coordinates calculated by the voxel indices and actual voxel sizes of the k-th level $V^{(l_k)} = \{v^{(l_k)}_{1},...,v^{(l_k)}_{N_k}\}$
-        - For each keypoint $p_i$, gather its neighboring non-empty voxel in the k-th level within radius $r_k$ to get the voxel-wise feature vectors![](D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw3\Sk.png)
+        - For each keypoint $p_i$, gather its neighboring non-empty voxel in the k-th level within radius $r_k$ to get the voxel-wise feature vectors<img src="D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw3\Sk.png" style="zoom:67%;" />
         - Generate feature for each key point $p_i$ as $f^{(pv_k)}_{i} = max\{G(M(S_{i}^{(l_k)}))\}$, where $M()$ means to randomly sample at most $T_k$ voxels within $S^{(l_k)}_{i}$, $G()$ means a multi-layer perceptron network to transform the voxel-wise features and relative locations into feature, we pick max result of all sampled $S^{(l_k)}_{i}$ and match it to key point $p_i$. Then generate the multi-scale semantic feature for the key point $f^{(pv)}_{i} = [f^{(pv_1)}_{i},f^{(pv_2)}_{i},f^{(pv_3)}_{i},f^{(pv_4)}_{i}]$, for $i = 1,...,n$. This will contains both voxel-wise and point-wise features and position information in key point $p_i$ 
       - **Predicted Keypoint Weighting**: The keypoints belonging to foreground objects should have bigger influence in accurate refinement of proposals. The predicted feature weight for each key point's feature $\widetilde{f}_{i}^{(p)} = A({f}_{i}^{(p)})*{f}_{i}^{(p)}$ , where $A()$ represents a three-layer MLP network with sigmoid function to predict foreground confidence between [0,1]
     - **RoI-grid Pooling**: the key point features are aggregated to the RoI-grid points. 
@@ -71,4 +71,38 @@ Before this paper, the main stream method for detections could be classified to 
 
 #### Design experiments and show the results
 
+- In order to validate if there is improvement in PV-RCNN after combining the voxel-wise and point-wise methods together, we use the KITTI dataset to compare the precision-recall curves.
+
+- We individually pick the car, pedestrian and cyclist datasets to check the 3D object detection results
+
+- We first compare the **PV-RCNN**(left) with **Frustum Pointnet**(right)
+
+  - <figure class="half">
+        <img src="PV-RCNN/car_detection_3d.png" style="zoom:70%;" /><img src="F-Pointnet/car_detection_3d (1).png" style="zoom:70%;" /><img src="PV-RCNN/cyclist_detection_3d.png" style="zoom:70%;" /><img src="F-Pointnet/cyclist_detection_3d (1).png" style="zoom:70%;" /><img src="PV-RCNN/pedestrian_detection_3d.png" style="zoom:70%;" /><img src="F-Pointnet/pedestrian_detection_3d (1).png" style="zoom:70%;" />
+    </figure>
+
+  - We can see that under the same recall rate, PV-RCNN's performance in precision rate is always better than F-Pointnet. Also, under the same precision rate, PV-RCNN still outperforms F-Pointnet in each dataset. Thus we can draw conclusion that PV-RCNN have higher bounding box proposal precision than the point-wise method F-Pointnet.
+
+- We then compare the **PV-RCNN**(left) with **VoxelNet**(right) in car dataset
+
+  - <figure class="half">
+        <img src="PV-RCNN/Vcar_detection_3d.png" style="zoom:70%;" /><img src="VoxelNet/Vcar_detection_3d (1).png" style="zoom:70%;" />
+    </figure>
+
+  - We can see that under the same recall rate, PV-RCNN's performance in precision rate is higher than VoxelNet in all difficulty levels. Also, under the same precision rate, PV-RCNN's recall rate is better than VoxelNet. Thus we can draw conclusion that PV-RCNN have higher bounding box proposal precision rate than the voxel-wise method VoxelNet.
+
+- Finally we compare the **F-Pointnet**(left) with **VoxelNet**(right) in car dataset
+
+  - <figure class="half">
+        <img src="F-Pointnet/car_detection_3d (1).png" style="zoom:70%;" /><img src="VoxelNet/Vcar_detection_3d (1).png" style="zoom:70%;" />
+    </figure>
+
+  - We can see that under the same recall rate, VoxelNet's performance in precision rate is higher than F-Pointnet all difficulty levels. Also, under the same precision rate, VoxelNet's recall rate is better than F-Pointnet's. Then we validate that voxel-wise algorithm is better thus most algorithm choose this as their backbones including PV-RCNN.
+
+- In conclusion, PV-RCNN combines point-wise method and voxel-wise method, taking all advantages from both methods, thus it outperforms the two methods. Also since voxel-wise has better bounding box proposal in experiment, it explains why PV-RCNN chooses voxel-based method as its backbone.
+
 #### Comments on how to improve the method
+
+- For changing the selected keypoints not being uniformly distributed, we can consider to replace the FPS selection strategy into something more local-dependent. 
+- We can also do more delicate filtering in choosing the proposed candidate keypoints, which will greatly improve the algorithm's speed.
+
