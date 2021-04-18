@@ -75,18 +75,18 @@ Before this paper, the main stream method for detections could be classified to 
 
 - We individually pick the car, pedestrian and cyclist datasets to check the 3D object detection results
 
-- We first compare the **PV-RCNN**(left) with **Frustum Pointnet**(right)
+- We first compare the **PV-RCNN**(left) with **PointRCNN**(right)
 
   - <figure class="half">
-        <img src="PV-RCNN/car_detection_3d.png" style="zoom:70%;" /><img src="F-Pointnet/car_detection_3d (1).png" style="zoom:70%;" /><img src="PV-RCNN/cyclist_detection_3d.png" style="zoom:70%;" /><img src="F-Pointnet/cyclist_detection_3d (1).png" style="zoom:70%;" /><img src="PV-RCNN/pedestrian_detection_3d.png" style="zoom:70%;" /><img src="F-Pointnet/pedestrian_detection_3d (1).png" style="zoom:70%;" />
+        <img src="PV-RCNN/car_detection_3d.png" style="zoom:50%;" /><img src="PointRCNN/car_detection_3d (1).png" style="zoom:50%;" /><img src="PV-RCNN/cyclist_detection_3d.png" style="zoom:50%;" /><img src="PointRCNN/cyclist_detection_3d (1).png" style="zoom:50%;" /><img src="PV-RCNN/pedestrian_detection_3d.png" style="zoom:50%;" /><img src="PointRCNN/pedestrian_detection_3d (1).png" style="zoom:50%;" />
     </figure>
 
-  - We can see that under the same recall rate, PV-RCNN's performance in precision rate is always better than F-Pointnet. Also, under the same precision rate, PV-RCNN still outperforms F-Pointnet in each dataset. Thus we can draw conclusion that PV-RCNN have higher bounding box proposal precision than the point-wise method F-Pointnet.
+  - We can see that under the same recall rate except cyclist, PV-RCNN's performance in precision rate is better than PointRCNN. Also, under the same precision rate except cyclist, PV-RCNN still outperforms PointRCNN in each dataset. Thus we can draw conclusion that PV-RCNN have commonly higher bounding box proposal precision than the point-wise method PointRCNN.
 
 - We then compare the **PV-RCNN**(left) with **VoxelNet**(right) in car dataset
 
   - <figure class="half">
-        <img src="PV-RCNN/Vcar_detection_3d.png" style="zoom:70%;" /><img src="VoxelNet/Vcar_detection_3d (1).png" style="zoom:70%;" />
+        <img src="PV-RCNN/Vcar_detection_3d.png" style="zoom:50%;" /><img src="VoxelNet/Vcar_detection_3d (1).png" style="zoom:50%;" />
     </figure>
 
   - We can see that under the same recall rate, PV-RCNN's performance in precision rate is higher than VoxelNet in all difficulty levels. Also, under the same precision rate, PV-RCNN's recall rate is better than VoxelNet. Thus we can draw conclusion that PV-RCNN have higher bounding box proposal precision rate than the voxel-wise method VoxelNet.
@@ -94,12 +94,12 @@ Before this paper, the main stream method for detections could be classified to 
 - Finally we compare the **F-Pointnet**(left) with **VoxelNet**(right) in car dataset
 
   - <figure class="half">
-        <img src="F-Pointnet/car_detection_3d (1).png" style="zoom:70%;" /><img src="VoxelNet/Vcar_detection_3d (1).png" style="zoom:70%;" />
+        <img src="PointRCNN/car_detection_3d (1).png" style="zoom:50%;" /><img src="VoxelNet/Vcar_detection_3d (1).png" style="zoom:50%;" />
     </figure>
 
-  - We can see that under the same recall rate, VoxelNet's performance in precision rate is higher than F-Pointnet all difficulty levels. Also, under the same precision rate, VoxelNet's recall rate is better than F-Pointnet's. Then we validate that voxel-wise algorithm is better thus most algorithm choose this as their backbones including PV-RCNN.
+  - We can see that both methods have almost the same performance except for around 0.9 recall rate, the VoxelNet method have a sharp fall in precision rate, thus it is a proof that voxel-wise method will lose information causing low precision performance compared to point-wise method (F-Pointnet), thus although voxel method can do fast calculation, point method is also needed for accuracy refinement.
 
-- In conclusion, PV-RCNN combines point-wise method and voxel-wise method, taking all advantages from both methods, thus it outperforms the two methods. Also since voxel-wise has better bounding box proposal in experiment, it explains why PV-RCNN chooses voxel-based method as its backbone.
+- In conclusion, PV-RCNN combines point-wise method and voxel-wise method, taking all advantages from both methods, thus it outperforms the two methods. Also since voxel-wise method has similar performance with point-wise method bounding box proposal in experiment except some details, it explains why PV-RCNN chooses voxel-based method as its backbone for good performance speed and add point-based method for better refinement.
 
 #### Comments on how to improve the method
 
