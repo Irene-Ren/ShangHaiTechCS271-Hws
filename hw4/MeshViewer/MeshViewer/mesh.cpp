@@ -173,7 +173,11 @@ void Mesh::DisplayMeshInfo()
 {
 	/*************************/
 	/* insert your code here */
-	/*************************/	
+	/*************************/
+	std::cout << "The number of vertices in this mesh is: " << Mesh::Vertices().size()<<std::endl;
+	std::cout << "The number of half edges in this mesh is: " << Mesh::Edges().size() + Mesh::BoundaryEdges().size() << std::endl;
+	std::cout << "The number of faces in this mesh is: " << Mesh::Faces().size() << std::endl;
+
 }
 
 

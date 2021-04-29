@@ -490,7 +490,7 @@ void main(int argc, char **argv) {
 	
 	/************************************************************************/
 	/* activate the following code if you finish the corresponding functions*/
-// 	mesh.DisplayMeshInfo();
+ 	mesh.DisplayMeshInfo();
 	/************************************************************************/
 
 	glutMainLoop();
