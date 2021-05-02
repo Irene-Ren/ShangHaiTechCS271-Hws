@@ -235,6 +235,7 @@ public:
 	// additional helper functions
 	// implement them if in needed
 	int CountBoundaryLoops();
+	HEdge* BoundaryAllChecked();
 	int CountConnectedComponents();
 };
 

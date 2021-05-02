@@ -177,10 +177,44 @@ void Mesh::DisplayMeshInfo()
 	std::cout << "The number of vertices in this mesh is: " << Mesh::Vertices().size()<<std::endl;
 	std::cout << "The number of half edges in this mesh is: " << Mesh::Edges().size() + Mesh::BoundaryEdges().size() << std::endl;
 	std::cout << "The number of faces in this mesh is: " << Mesh::Faces().size() << std::endl;
-
+	std::cout << "The number of boundary loops in this mesh is: " << Mesh::CountBoundaryLoops() << std::endl;
 }
-
-
+HEdge* Mesh::BoundaryAllChecked()
+{
+	for (int i = 0; i < bheList.size(); i++)
+	{
+		if (!bheList[i]->Flag())
+		{
+			return bheList[i];
+		}
+	}
+	return NULL;
+}
+int Mesh::CountBoundaryLoops()
+{
+	if (bheList.size() == 0)
+	{
+		std::cout << "No boundary edges" << std::endl;
+		return 0;
+	}
+	HEdge* startEdge = bheList[0];
+	startEdge->SetFlag(true);
+	int count = 0;
+	
+	while (startEdge != NULL)
+	{	
+		startEdge->SetFlag(true);
+		HEdge* next = startEdge->Next();
+		while (next != startEdge)
+		{
+			next->SetFlag(true);
+			next = next->Next();
+		}
+		count++;
+		startEdge = Mesh::BoundaryAllChecked();
+	}
+	return count;
+}
 // -------------------------------------------------------
 // DO NOT TOUCH THE FOLLOWING FOR NOW
 // -------------------------------------------------------
