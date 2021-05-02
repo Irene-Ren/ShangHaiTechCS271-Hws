@@ -174,10 +174,18 @@ void Mesh::DisplayMeshInfo()
 	/*************************/
 	/* insert your code here */
 	/*************************/
-	std::cout << "The number of vertices in this mesh is: " << Mesh::Vertices().size()<<std::endl;
-	std::cout << "The number of half edges in this mesh is: " << Mesh::Edges().size() + Mesh::BoundaryEdges().size() << std::endl;
-	std::cout << "The number of faces in this mesh is: " << Mesh::Faces().size() << std::endl;
-	std::cout << "The number of boundary loops in this mesh is: " << Mesh::CountBoundaryLoops() << std::endl;
+	int numVertices = Mesh::Vertices().size();
+	int numHEdges = Mesh::Edges().size() + Mesh::BoundaryEdges().size();
+	int numFaces = Mesh::Faces().size();
+	int numBoundaryLoops = Mesh::CountBoundaryLoops();
+	int numConnectedComponent = 0;//Mesh::CountConnectedComponents();
+	int numGenus = numConnectedComponent - (numVertices - numHEdges / 2 + numFaces + numBoundaryLoops) / 2;
+	std::cout << "The number of vertices in this mesh is: " << numVertices <<std::endl;
+	std::cout << "The number of half edges in this mesh is: " << numHEdges << std::endl;
+	std::cout << "The number of faces in this mesh is: " << numFaces << std::endl;
+	std::cout << "The number of boundary loops in this mesh is: " << numBoundaryLoops << std::endl;
+	std::cout << "The number of connected components in this mesh is: " << numConnectedComponent << std::endl;
+	std::cout << "The number of genus in this mesh is: " << numGenus << std::endl;
 }
 HEdge* Mesh::BoundaryAllChecked()
 {
@@ -214,6 +222,75 @@ int Mesh::CountBoundaryLoops()
 		startEdge = Mesh::BoundaryAllChecked();
 	}
 	return count;
+}
+int Mesh::CountConnectedComponents()
+{
+	if (vList.size() == 0)
+	{
+		return 0;
+	}
+	std::vector<Vertex*> startVertex = Mesh::VerticesAllChecked();
+	int count = 0;
+
+	while (startVertex.size() != 0)
+	{
+		BFSConnected(startVertex);
+		count++;
+		startVertex = Mesh::VerticesAllChecked();
+	}
+	Mesh::ClearFlags();
+	return count;
+}
+std::vector<Vertex*> Mesh::VerticesAllChecked()
+{
+	std::vector<Vertex*> l;
+
+	for (int i = 0; i < vList.size(); i++)
+	{
+		if (vList[i]->Flag() == 0)
+		{
+			l.push_back(vList[i]);
+			return l;
+		}
+	}
+	return l;
+}
+void Mesh::ClearFlags()
+{
+	for (int i = 0; i < vList.size(); i++)
+	{
+		vList[i]->SetFlag(0);
+	}
+}
+std::vector<Vertex*> FindNonvisitedVertices(Vertex* v)
+{
+	std::vector<Vertex*> nonVisitedList;
+	OneRingVertex ring(v);
+	Vertex *curr = NULL;
+	while (curr = ring.NextVertex())
+	{
+		if (curr->Flag() == 0)
+		{
+			nonVisitedList.push_back(curr);
+		}
+	}
+	return nonVisitedList;
+}
+void BFSConnected(std::vector<Vertex*> vertexList)
+{
+	if (vertexList.size() == 0)
+	{
+		return;
+	}
+	else
+	{
+		for (int i = 0; i < vertexList.size(); i++)
+		{
+			vertexList[i]->SetFlag(1);
+			std::vector<Vertex*> vertexList_i = FindNonvisitedVertices(vertexList[i]);
+			BFSConnected(vertexList_i);
+		}
+	}
 }
 // -------------------------------------------------------
 // DO NOT TOUCH THE FOLLOWING FOR NOW

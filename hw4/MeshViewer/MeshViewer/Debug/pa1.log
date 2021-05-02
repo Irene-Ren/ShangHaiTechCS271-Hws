@@ -1,4 +1,7 @@
 ﻿cl : Command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
   mesh.cpp
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\mesh.cpp(184): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\mesh.cpp(192): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\mesh.cpp(248): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\mesh.cpp(260): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\mesh.cpp(287): warning C4018: '<': signed/unsigned mismatch
   pa1.vcxproj -> D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw4\MeshViewer\MeshViewer\Debug\pa1.exe

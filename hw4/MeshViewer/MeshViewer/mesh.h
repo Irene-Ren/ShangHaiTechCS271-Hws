@@ -237,11 +237,14 @@ public:
 	int CountBoundaryLoops();
 	HEdge* BoundaryAllChecked();
 	int CountConnectedComponents();
+	std::vector<Vertex*> VerticesAllChecked();
+	void ClearFlags();
 };
 
 // other helper functions
 inline void SetPrevNext(HEdge *e1, HEdge *e2) { e1->SetNext(e2); e2->SetPrev(e1); }
 inline void SetTwin(HEdge *e1, HEdge *e2) { e1->SetTwin(e2); e2->SetTwin(e1); }
 inline void SetFace(Face *f, HEdge *e) { f->SetHalfEdge(e); e->SetFace(f); }
-
+std::vector<Vertex*> FindNonvisitedVertices(Vertex* v);
+void BFSConnected(std::vector<Vertex*> vertexList);
 #endif // __MESH_H__
