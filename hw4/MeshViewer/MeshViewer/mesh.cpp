@@ -178,7 +178,7 @@ void Mesh::DisplayMeshInfo()
 	int numHEdges = Mesh::Edges().size() + Mesh::BoundaryEdges().size();
 	int numFaces = Mesh::Faces().size();
 	int numBoundaryLoops = Mesh::CountBoundaryLoops();
-	int numConnectedComponent = 0;//Mesh::CountConnectedComponents();
+	int numConnectedComponent = Mesh::CountConnectedComponents();
 	int numGenus = numConnectedComponent - (numVertices - numHEdges / 2 + numFaces + numBoundaryLoops) / 2;
 	std::cout << "The number of vertices in this mesh is: " << numVertices <<std::endl;
 	std::cout << "The number of half edges in this mesh is: " << numHEdges << std::endl;
@@ -202,7 +202,6 @@ int Mesh::CountBoundaryLoops()
 {
 	if (bheList.size() == 0)
 	{
-		std::cout << "No boundary edges" << std::endl;
 		return 0;
 	}
 	HEdge* startEdge = bheList[0];
@@ -262,19 +261,16 @@ void Mesh::ClearFlags()
 		vList[i]->SetFlag(0);
 	}
 }
-std::vector<Vertex*> FindNonvisitedVertices(Vertex* v)
+bool IsInList(Vertex* v,std::vector<Vertex*> vertexList)
 {
-	std::vector<Vertex*> nonVisitedList;
-	OneRingVertex ring(v);
-	Vertex *curr = NULL;
-	while (curr = ring.NextVertex())
+	for (int i = 0; i < vertexList.size(); i++)
 	{
-		if (curr->Flag() == 0)
+		if (vertexList[i] == v)
 		{
-			nonVisitedList.push_back(curr);
+			return true;
 		}
 	}
-	return nonVisitedList;
+	return false;
 }
 void BFSConnected(std::vector<Vertex*> vertexList)
 {
@@ -284,12 +280,21 @@ void BFSConnected(std::vector<Vertex*> vertexList)
 	}
 	else
 	{
+		std::vector<Vertex*> vertexList_i;
 		for (int i = 0; i < vertexList.size(); i++)
 		{
 			vertexList[i]->SetFlag(1);
-			std::vector<Vertex*> vertexList_i = FindNonvisitedVertices(vertexList[i]);
-			BFSConnected(vertexList_i);
+			OneRingVertex ring(vertexList[i]);
+			Vertex *curr = NULL;
+			while (curr = ring.NextVertex())
+			{
+				if (curr->Flag() == 0 && !IsInList(curr,vertexList_i))
+				{
+					vertexList_i.push_back(curr);
+				}
+			}
 		}
+		BFSConnected(vertexList_i);
 	}
 }
 // -------------------------------------------------------
