@@ -126,6 +126,7 @@ bool Mesh::LoadObjFile(const char *filename) {
 
 	char buf[1024], type[1024];
 	do {
+		buf[0] = type[0] = '\0'; // Flush the char array before reading each line.
 		ifs.getline(buf, 1024);
 		istrstream iss(buf);
 		iss >> type;
