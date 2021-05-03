@@ -505,11 +505,7 @@ void DeleteSelectedVertex(int vertex)
 		std::cout << "Do not support Deleting Face into line or vertex" << std::endl;
 		return;
 	}
-	if (mesh.vList[vertex]->IsBoundary())
-	{
-		std::cout << "Do not support Deleting Boundary vertices";
-		return;
-	}
+	
 	Vertex* v = mesh.vList[vertex];
 	OneRingHEdge ring(v);
 
@@ -519,9 +515,6 @@ void DeleteSelectedVertex(int vertex)
 	{
 		//Save the ring HEdge, important in later edge deletion
 		ringEdges.push_back(curr);
-
-		HEdge* surroudingE = curr->Next();
-
 
 		//Delete face from mesh
 		for (int i = 0; i < mesh.fList.size(); i++)
@@ -535,13 +528,15 @@ void DeleteSelectedVertex(int vertex)
 			}
 		}
 	}
-
-	Vertex* v0 = ringEdges[0]->End();
-	for (int e = 1; e < ringEdges.size() - 1; e++)
+	if (!v->IsBoundary())
 	{
-		Vertex* v1 = ringEdges[e]->Next()->Start();
-		Vertex* v2 = ringEdges[e]->Next()->End();
-		mesh.AddFace(v0->Index(), v1->Index(), v2->Index());
+		Vertex* v0 = ringEdges[0]->End();
+		for (int e = 1; e < ringEdges.size() - 1; e++)
+		{
+			Vertex* v1 = ringEdges[e]->Next()->Start();
+			Vertex* v2 = ringEdges[e]->Next()->End();
+			mesh.AddFace(v0->Index(), v1->Index(), v2->Index());
+		}
 	}
 	
 	for (int e = 0; e < ringEdges.size(); e++)
