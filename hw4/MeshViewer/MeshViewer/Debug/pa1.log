@@ -14,4 +14,6 @@ d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(533): warning C4018: '<': signed/unsigned mismatch
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(541): warning C4018: '<': signed/unsigned mismatch
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(543): warning C4018: '<': signed/unsigned mismatch
+  LINK : Debug\pa1.exe not found or not built by the last incremental link; performing full link
+main.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
   pa1.vcxproj -> D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw4\MeshViewer\MeshViewer\Debug\pa1.exe
