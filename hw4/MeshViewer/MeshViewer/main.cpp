@@ -357,6 +357,13 @@ void DrawSelectedVertices()
 // GLUT keyboard callback function
 void KeyboardFunc(unsigned char ch, int x, int y) {
 	switch (ch) {
+	case 'd':
+	case 'D':
+		if (currSelectedVertex != -1)
+		{
+			DeleteSelectedVertex(currSelectedVertex);
+		}
+		break;
 	case 'u':
 	case 'U':
 		/************************************************************************/
@@ -477,6 +484,87 @@ void SelectVertexByPoint()
 	    vList[selectedIndex]->SetFlag(1);
 	}
 	
+}
+
+void DeleteSelectedVertex(int vertex)
+{
+	Vertex* v = mesh.vList[vertex];
+	OneRingHEdge ring(v);
+	//Only removed the vertex from list
+	mesh.vList.erase(mesh.vList.begin() + vertex);
+
+	HEdge *curr = NULL;
+	std::vector<HEdge*> surroudingEdges;
+	while (curr = ring.NextHEdge())
+	{
+		std::cout << "HELLO" << std::endl;
+		//Save the ring HEdge, important in later edge deletion
+		surroudingEdges.push_back(curr);
+		//Delete face from mesh
+		for (int i = 0; i < mesh.fList.size(); i++)
+		{
+			if (mesh.fList[i] == curr->LeftFace())
+			{
+				delete mesh.fList[i];
+				mesh.fList.erase(mesh.fList.begin() + i);
+				std::cout << "Deleted face " << i << std::endl;
+				break;
+			}
+		}
+		//Delete ring HEdge's twin edges
+		for (int i = 0; i < mesh.heList.size(); i++)
+		{
+			if (mesh.heList[i] == curr->Twin())
+			{
+				delete mesh.heList[i];
+				mesh.heList.erase(mesh.heList.begin() + i);
+				break;
+			}
+		}
+		//Delete ring HEdges, JUST DELETED POINTERS IN LIST, still need to delete the objects later
+		for (int i = 0; i < mesh.heList.size(); i++)
+		{
+			if (mesh.heList[i] == curr)
+			{
+				delete mesh.heList[i];
+				mesh.heList.erase(mesh.heList.begin() + i);
+				break;
+			}
+		}
+	}
+	Vertex* startVertexIvs = surroudingEdges[0]->Start();
+	for (int i = 0; i < surroudingEdges.size(); i++)
+	{
+		int t = (i + 1) % surroudingEdges.size();
+		HEdge* holeEdge_next = surroudingEdges[i]->Next();
+		HEdge* holeEdge_prev = surroudingEdges[t]->Next();
+		SetPrevNext(holeEdge_next, holeEdge_prev);
+
+		if (i < surroudingEdges.size() - 3)
+		{
+			HEdge *he, *bhe;
+			he = new HEdge();
+			bhe = new HEdge();
+			Vertex* startVertex = holeEdge_prev->End();
+			he->SetStart(startVertex);
+			bhe->SetStart(startVertexIvs);
+
+			if (i != 0)
+			{
+				holeEdge_next = holeEdge_next->Next()->Twin();
+			}
+			SetPrevNext(holeEdge_prev, he);
+			SetPrevNext(he, holeEdge_next);
+			SetPrevNext(holeEdge_next->Twin(), bhe);
+			SetPrevNext(bhe, holeEdge_prev->Twin());
+		}
+	}
+	//Delete elements included in surroundingEdges, which are ring HEdges
+	for (vector<HEdge*>::iterator it = surroudingEdges.begin(); it != surroudingEdges.end(); ++it)
+	{
+		delete * it;
+	}
+	delete v;
 }
 
 // main function
