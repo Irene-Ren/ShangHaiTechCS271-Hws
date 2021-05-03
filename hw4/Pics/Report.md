@@ -99,25 +99,29 @@
 - Due to not maintaining the vertices's Indices, the menu when right click the mouse is disabled if one vertex is deleted
 - Sometimes if scale the view too close, the program will provide error, but this seems to be the bug of the template, just restart the program and be careful when scrolling view
 
-##### Result
+##### Result (Selected Some rough models (less vertices) for better view)
 
-- Performance on ordinary non-bounding vertex
+- Performance on ordinary non-bounding vertex **(mannequin.obj)**
   - As the first two figures, you can see the vertex has been deleted and the layout of the face around the deleted vertex changes to fit the rules
   - The third and fourth picture shows that the program prohibits the second deletion, it also prevents some unintended triggering.
 
 <figure class="half">
-    <img src="DeleteVertexSelect.png" style="zoom:50%;" /><img src="DeleteVertexMerge.png" style="zoom:50%;" /><img src="DeleteVertexSelectSecond.png" style="zoom:50%;" /><img src="DeleteVertexMergeSecond.png" style="zoom:50%;" />
+    <img src="DeleteVertexSelect.png" style="zoom:30%;" /><img src="DeleteVertexMerge.png" style="zoom:30%;" /><img src="DeleteVertexSelectSecond.png" style="zoom:30%;" /><img src="DeleteVertexMergeSecond.png" style="zoom:30%;" />
 </figure>
 
-- Performance on ordinary bounding vertex
-- As in figures, the corresponding vertex has been deleted, you can see the tiny difference in the way the boundary edge goes
+
+- Performance on ordinary bounding vertex **(mannequin.obj)**
+
+  - As in figures, the corresponding vertex has been deleted, you can see the tiny difference in the way the boundary edge goes
 
 <figure class="half">
-    <img src="DeleteVertexBoundarySelect.png" style="zoom:50%;" /><img src="DeleteVertexBoundary.png" style="zoom:50%;" />
+    <img src="DeleteVertexBoundarySelect.png" style="zoom:30%;" /><img src="DeleteVertexBoundary.png" style="zoom:30%;" />
 
-- Performance on non-bounding Edge vertex (sharp corners)
+
+- Performance on non-bounding Edge vertex (sharp corners) **(gbones.obj, atet.obj)**
   - As you can see, even if deleting an sharp corner, the mending of the faces still performs good
 
 <figure class="half">
-    <img src="DeleteVertexNonConnectSelect.png" style="zoom:50%;" /><img src="DeleteVertexNonConnect.png" style="zoom:50%;" /><img src="DeleteVertexSharpSelect.png" style="zoom:50%;" /><img src="DeleteVertexSharp.png" style="zoom:50%;" />
+    <img src="DeleteVertexNonConnectSelect.png" style="zoom:30%;" /><img src="DeleteVertexNonConnect.png" style="zoom:30%;" /><img src="DeleteVertexSharpSelect.png" style="zoom:30%;" /><img src="DeleteVertexSharp.png" style="zoom:30%;" />
+
 
