@@ -483,7 +483,6 @@ void SelectVertexByPoint()
 	    currSelectedVertex = selectedIndex;
 	    vList[selectedIndex]->SetFlag(1);
 	}
-	
 }
 
 void DeleteSelectedVertex(int vertex)
@@ -494,11 +493,15 @@ void DeleteSelectedVertex(int vertex)
 	mesh.vList.erase(mesh.vList.begin() + vertex);
 
 	HEdge *curr = NULL;
-	std::vector<HEdge*> surroudingEdges;
+	std::vector<HEdge*> ringEdges;
 	while (curr = ring.NextHEdge())
 	{
 		//Save the ring HEdge, important in later edge deletion
-		surroudingEdges.push_back(curr);
+		ringEdges.push_back(curr);
+
+		HEdge* surroudingE = curr->Next();
+
+
 		//Delete face from mesh
 		for (int i = 0; i < mesh.fList.size(); i++)
 		{
@@ -511,75 +514,40 @@ void DeleteSelectedVertex(int vertex)
 			}
 		}
 	}
-	Vertex* startVertexIvs = surroudingEdges[0]->Start();
-	for (int i = 0; i < surroudingEdges.size(); i++)
+
+	Vertex* v0 = ringEdges[0]->End();
+	for (int e = 1; e < ringEdges.size() - 1; e++)
 	{
-		int t = (i + 1) % surroudingEdges.size();
-		HEdge* holeEdge_next = surroudingEdges[i]->Next();
-		HEdge* holeEdge_prev = surroudingEdges[t]->Next();
-		SetPrevNext(holeEdge_next, holeEdge_prev);
-
-		if (i < surroudingEdges.size() - 3)
-		{
-			HEdge *he, *bhe;
-			he = new HEdge();
-			bhe = new HEdge();
-
-			Vertex* startVertex = holeEdge_prev->End();
-			he->SetStart(startVertex);
-			startVertex->SetHalfEdge(he);
-			bhe->SetStart(startVertexIvs);
-
-			if (i != 0)
-			{
-				holeEdge_next = holeEdge_next->Next()->Twin();
-			}
-			SetPrevNext(holeEdge_prev, he);
-			SetPrevNext(he, holeEdge_next);
-			SetPrevNext(holeEdge_next->Twin(), bhe);
-			SetPrevNext(bhe, holeEdge_prev->Twin());
-
-			SetTwin(he, bhe);
-
-			Face* f;
-			f = new Face();
-			SetFace(f, holeEdge_next);
-			SetFace(f, holeEdge_prev);
-			SetFace(f, he);
-
-			mesh.heList.push_back(he);
-			mesh.heList.push_back(bhe);
-			mesh.fList.push_back(f);
-		}
+		Vertex* v1 = ringEdges[e]->Next()->Start();
+		Vertex* v2 = ringEdges[e]->Next()->End();
+		mesh.AddFace(v0->Index(), v1->Index(), v2->Index());
 	}
-	//Delete ring HEdge's twin edges
-	for (int e = 0; e < surroudingEdges.size(); e++)
+	
+	for (int e = 0; e < ringEdges.size(); e++)
 	{
 		for (int i = 0; i < mesh.heList.size(); i++)
 		{
-			if (mesh.heList[i] == surroudingEdges[e]->Twin())
+			//Delete ring HEdge's twin edges
+			bool case_1 = mesh.heList[i] == ringEdges[e]->Twin();
+			//Delete edges that surrounds the vertex
+			bool case_2 = mesh.heList[i] == ringEdges[e]->Next();
+			//Delete ring HEdges
+			bool case_3 = mesh.heList[i] == ringEdges[e];
+			if (case_1 || case_2 || case_3)
 			{
 				delete mesh.heList[i];
 				mesh.heList.erase(mesh.heList.begin() + i);
+			}
+			if (case_1 && case_2 && case_3)
+			{
 				break;
 			}
 		}
 	}
-	//Delete elements included in surroundingEdges, which are ring HEdges
-	for (int e = 0; e < surroudingEdges.size(); e++)
-	{
-		for (int i = 0; i < mesh.heList.size(); i++)
-		{
-			if (mesh.heList[i] == surroudingEdges[e])
-			{
-				delete mesh.heList[i];
-				mesh.heList.erase(mesh.heList.begin() + i);
-				break;
-			}
-		}
-	}
+
 	delete v;
 }
+
 
 // main function
 void main(int argc, char **argv) {

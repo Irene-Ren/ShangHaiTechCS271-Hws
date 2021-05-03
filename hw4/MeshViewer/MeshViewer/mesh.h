@@ -65,6 +65,7 @@ public:
 	HEdge*  SetNext(HEdge* e) { return next = e; }
 	Vertex* SetStart(Vertex* v) { return start = v; }
 	Face*   SetFace(Face* f) { return face = f; }
+	bool    SetBoundary(bool b) { return boundary = b; }
 	bool    SetFlag(bool b) { return flag = b; }
 	bool    SetValid(bool b) { return valid = b; }
 	bool    IsBoundary() const { return boundary; }
