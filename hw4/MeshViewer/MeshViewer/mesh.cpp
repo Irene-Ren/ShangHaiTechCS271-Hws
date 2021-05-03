@@ -221,6 +221,7 @@ int Mesh::CountBoundaryLoops()
 		count++;
 		startEdge = Mesh::BoundaryAllChecked();
 	}
+	Mesh::ClearFlags();
 	return count;
 }
 int Mesh::CountConnectedComponents()
@@ -260,6 +261,10 @@ void Mesh::ClearFlags()
 	for (int i = 0; i < vList.size(); i++)
 	{
 		vList[i]->SetFlag(0);
+	}
+	for (int i = 0; i < bheList.size(); i++)
+	{
+		bheList[i]->SetFlag(false);
 	}
 }
 bool IsInList(Vertex* v,std::vector<Vertex*> vertexList)
