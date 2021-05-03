@@ -11,7 +11,7 @@ d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(345): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(351): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(520): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(534): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(542): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(544): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(533): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(541): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(543): warning C4018: '<': signed/unsigned mismatch
   pa1.vcxproj -> D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw4\MeshViewer\MeshViewer\Debug\pa1.exe

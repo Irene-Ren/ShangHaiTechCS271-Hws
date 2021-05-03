@@ -528,16 +528,15 @@ void DeleteSelectedVertex(int vertex)
 			}
 		}
 	}
-	if (!v->IsBoundary())
+	
+	Vertex* v0 = ringEdges[0]->End();
+	for (int e = 1; e < ringEdges.size() - 1; e++)
 	{
-		Vertex* v0 = ringEdges[0]->End();
-		for (int e = 1; e < ringEdges.size() - 1; e++)
-		{
-			Vertex* v1 = ringEdges[e]->Next()->Start();
-			Vertex* v2 = ringEdges[e]->Next()->End();
-			mesh.AddFace(v0->Index(), v1->Index(), v2->Index());
-		}
+		Vertex* v1 = ringEdges[e]->Next()->Start();
+		Vertex* v2 = ringEdges[e]->Next()->End();
+		mesh.AddFace(v0->Index(), v1->Index(), v2->Index());
 	}
+	
 	
 	for (int e = 0; e < ringEdges.size(); e++)
 	{
