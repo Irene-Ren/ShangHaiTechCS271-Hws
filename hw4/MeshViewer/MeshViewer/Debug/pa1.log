@@ -1,17 +1,17 @@
 ﻿cl : Command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
   main.cpp
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(193): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(194): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(195): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(196): warning C4244: 'argument': conversion from 'C' to 'GLfloat', possible loss of data
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(198): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(199): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(200): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(201): warning C4244: 'argument': conversion from 'C' to 'GLfloat', possible loss of data
           with
           [
               C=double
           ]
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(340): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(346): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(506): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(519): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(526): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(528): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(345): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(351): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(527): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(540): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(547): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw4\meshviewer\meshviewer\main.cpp(549): warning C4018: '<': signed/unsigned mismatch
   pa1.vcxproj -> D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw4\MeshViewer\MeshViewer\Debug\pa1.exe

@@ -34,6 +34,8 @@ Vector3d g_center;
 double g_sdepth;
 Mesh mesh;	// our mesh
 
+bool hasDeletedVertex = false;
+
 // functions
 void SetBoundaryBox(const Vector3d & bmin, const Vector3d & bmax);
 void InitGL();
@@ -167,8 +169,11 @@ void MenuCallback(int value) {
 	switch (value) {
 	case 99: exit(0); break;
 	default: 
-		displayMode = value;
-		glutPostRedisplay();
+		if (!hasDeletedVertex)
+		{
+			displayMode = value;
+			glutPostRedisplay();
+		}
 		break;
 	}
 }
@@ -359,9 +364,17 @@ void KeyboardFunc(unsigned char ch, int x, int y) {
 	switch (ch) {
 	case 'd':
 	case 'D':
-		if (currSelectedVertex != -1)
+		if (hasDeletedVertex)
 		{
-			DeleteSelectedVertex(currSelectedVertex);
+			std::cout << "Already deleted one vertex, can't process" << std::endl;
+		}
+		else
+		{
+			if (currSelectedVertex != -1)
+			{
+				DeleteSelectedVertex(currSelectedVertex);
+				hasDeletedVertex = true;
+			}
 		}
 		break;
 	case 'u':
@@ -487,10 +500,18 @@ void SelectVertexByPoint()
 
 void DeleteSelectedVertex(int vertex)
 {
+	if (mesh.vList.size() < 4)
+	{
+		std::cout << "Do not support Deleting Face into line or vertex" << std::endl;
+		return;
+	}
+	if (mesh.vList[vertex]->IsBoundary())
+	{
+		std::cout << "Do not support Deleting Boundary vertices";
+		return;
+	}
 	Vertex* v = mesh.vList[vertex];
 	OneRingHEdge ring(v);
-	//Only removed the vertex from list
-	mesh.vList.erase(mesh.vList.begin() + vertex);
 
 	HEdge *curr = NULL;
 	std::vector<HEdge*> ringEdges;
@@ -544,8 +565,10 @@ void DeleteSelectedVertex(int vertex)
 			}
 		}
 	}
-
+	//Remove the vertex from list
+	mesh.vList.erase(mesh.vList.begin() + vertex);
 	delete v;
+	std::cout << "Process Finished" << std::endl;
 }
 
 
