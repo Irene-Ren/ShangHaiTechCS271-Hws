@@ -562,6 +562,7 @@ void DeleteSelectedVertex(int vertex)
 	//Remove the vertex from list
 	mesh.vList.erase(mesh.vList.begin() + vertex);
 	delete v;
+	glutPostRedisplay();
 	std::cout << "Process Finished" << std::endl;
 }
 

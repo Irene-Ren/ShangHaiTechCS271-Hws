@@ -18,7 +18,18 @@
 
 ##### Instructions
 
-- In **Project -> pa1 Properties... -> Debugging**, Set **Command Arguments** to `models\THE_OBJ_FILENAME`.
+- If you use command lines **(Windows Powershell recommended)**
+  - First Enter the `BUILD_EXE` folder in the terminal window
+  - then run the EXE with `.\pa1.exe ..\models\{THE_OBJ_FILENAME}`
+  -  (`./pa1.exe ../models/{THE_OBJ_FILENAME}` in Linux based system maybe, I haven't tried)
+  - For example, if you want to check model **bu.obj**, simply type `.\pa1.exe ..\models\bu.obj`                               <img src="D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw4\Pics\instruction_ps.png" style="zoom:40%;" />
+
+- If you use visual studio (2017) to open the pa1.sln
+
+  - In **Project -> pa1 Properties... -> Debugging**, Set **Command Arguments** to `models\{THE_OBJ_FILENAME}`.                                         <img src="D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw4\Pics\instruction_vs.png" style="zoom: 40%;" />
+
+    
+
   - For example, if you want to check model **bu.obj**, simply write in `models\bu.obj`
 
 ##### Output
@@ -103,12 +114,12 @@
 
 - Performance on ordinary non-bounding vertex **(mannequin.obj)**
   - As the first two figures, you can see the vertex has been deleted and the layout of the face around the deleted vertex changes to fit the rules
-  - The third and fourth picture shows that the program prohibits the second deletion, it also prevents some unintended triggering.
 
-<figure class="half">
-    <img src="DeleteVertexSelect.png" style="zoom:30%;" /><img src="DeleteVertexMerge.png" style="zoom:30%;" /><img src="DeleteVertexSelectSecond.png" style="zoom:30%;" /><img src="DeleteVertexMergeSecond.png" style="zoom:30%;" />
-</figure>
+ <img src="DeleteVertexSelect.png" style="zoom:30%;" /><img src="DeleteVertexMerge.png" style="zoom:30%;" />
 
+- The following two pictures shows that the program prohibits the second deletion, it also prevents some unintended triggering.
+
+<img src="DeleteVertexSelectSecond.png" style="zoom:25%;" /><img src="DeleteVertexMergeSecond.png" style="zoom:25%;" />
 
 - Performance on ordinary bounding vertex **(mannequin.obj)**
 
