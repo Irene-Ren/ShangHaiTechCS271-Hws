@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+
 #include "mesh.h"
 #include "matrix.h"
 #include <cstring>
@@ -311,6 +313,22 @@ void Mesh::ComputeVertexNormals()
 	/*************************/
 	/* insert your code here */
 	/*************************/
+}
+Vector3d ComputeVertexNormalOne(Vertex* v)
+{
+	OneRingVertex ring(v);
+	Vertex *curr = NULL;
+	Vector3d t1, t2;
+	int k = v->Valence();
+	int i = 0;
+	while (curr = ring.NextVertex())
+	{
+		t1 += cos(2 * M_PI * i / k) * curr->Position;
+		t2 += sin(2 * M_PI * i / k) * curr->Position;
+		i += 1;
+	}
+	Vector3d normal = t1.Cross(t2); //Remember to normalize later
+	v->SetNormal(normal);
 }
 
 void Mesh::UmbrellaSmooth() 

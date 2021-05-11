@@ -240,6 +240,7 @@ public:
 	int CountConnectedComponents();
 	std::vector<Vertex*> VerticesAllChecked();
 	void ClearFlags();
+	Vector3d ComputeVertexNormalOne(Vertex* v);
 };
 
 // other helper functions
