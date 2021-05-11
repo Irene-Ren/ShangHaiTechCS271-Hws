@@ -313,21 +313,54 @@ void Mesh::ComputeVertexNormals()
 	/*************************/
 	/* insert your code here */
 	/*************************/
+	for (int i = 0; i < vList.size(); i++)
+	{
+		ComputeVertexNormalOne(vList[i]);
+	}
 }
 Vector3d ComputeVertexNormalOne(Vertex* v)
 {
 	OneRingVertex ring(v);
 	Vertex *curr = NULL;
-	Vector3d t1, t2;
-	int k = v->Valence();
-	int i = 0;
+	std::vector<Vertex*> valenceVertices;
 	while (curr = ring.NextVertex())
 	{
-		t1 += cos(2 * M_PI * i / k) * curr->Position;
-		t2 += sin(2 * M_PI * i / k) * curr->Position;
-		i += 1;
+		valenceVertices.push_back(curr);
 	}
-	Vector3d normal = t1.Cross(t2); //Remember to normalize later
+	Vector3d t1, t2;
+	int k = v->Valence();
+	if (!v->IsBoundary)
+	{
+		for (int i = 0; i < k; i++)
+		{
+			t1 += cos(2 * M_PI * i / k) * valenceVertices[i]->Position;
+			t2 += sin(2 * M_PI * i / k) * valenceVertices[i]->Position;
+		}
+	}
+	else
+	{
+		t1 = valenceVertices[0]->Position - valenceVertices[k - 1]->Position;
+		if (valenceVertices.size() == 2)
+		{
+			t2 = valenceVertices[0]->Position + valenceVertices[1]->Position - 2 * v->Position;
+		}
+		else if (valenceVertices.size() == 3)
+		{
+			t2 = valenceVertices[1]->Position - v->Position;
+		}
+		else
+		{
+			double theta = M_PI / (k - 1);
+			Vector3d tmp;
+			for (int i = 1; i < k - 1; i++)
+			{
+				tmp += sin(i*theta) * valenceVertices[i]->Position;
+			}
+			t2 = sin(theta)*(valenceVertices[0]->Position + valenceVertices[k - 1]->Position)
+				+ (2 * cos(theta) - 2) * tmp;
+		}
+	}
+	Vector3d normal = t1.Cross(t2)/(t1.Cross(t2)).L2Norm(); //Remember to normalize later
 	v->SetNormal(normal);
 }
 
