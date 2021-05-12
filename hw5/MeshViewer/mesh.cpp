@@ -318,7 +318,7 @@ void Mesh::ComputeVertexNormals()
 		ComputeVertexNormalOne(vList[i]);
 	}
 }
-Vector3d ComputeVertexNormalOne(Vertex* v)
+void ComputeVertexNormalOne(Vertex* v)
 {
 	OneRingVertex ring(v);
 	Vertex *curr = NULL;
@@ -329,7 +329,7 @@ Vector3d ComputeVertexNormalOne(Vertex* v)
 	}
 	Vector3d t1, t2;
 	int k = v->Valence();
-	if (!v->IsBoundary)
+	if (!v->IsBoundary())
 	{
 		for (int i = 0; i < k; i++)
 		{
@@ -420,6 +420,10 @@ void Mesh::UmbrellaSmooth()
 				//TODO: add weight by using cot
 				//TODO: Change IsInList() to int type returning the position if found in list
 				L.AddElement(i, j, weights[index] / weight_sum);
+			}
+			else
+			{
+				L.AddElement(i, j, 0);
 			}
 		}
 	}
