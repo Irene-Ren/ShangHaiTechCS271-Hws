@@ -333,20 +333,20 @@ Vector3d ComputeVertexNormalOne(Vertex* v)
 	{
 		for (int i = 0; i < k; i++)
 		{
-			t1 += cos(2 * M_PI * i / k) * valenceVertices[i]->Position;
-			t2 += sin(2 * M_PI * i / k) * valenceVertices[i]->Position;
+			t1 += cos(2 * M_PI * i / k) * valenceVertices[i]->Position();
+			t2 += sin(2 * M_PI * i / k) * valenceVertices[i]->Position();
 		}
 	}
 	else
 	{
-		t1 = valenceVertices[0]->Position - valenceVertices[k - 1]->Position;
+		t1 = valenceVertices[0]->Position() - valenceVertices[k - 1]->Position();
 		if (valenceVertices.size() == 2)
 		{
-			t2 = valenceVertices[0]->Position + valenceVertices[1]->Position - 2 * v->Position;
+			t2 = valenceVertices[0]->Position() + valenceVertices[1]->Position() - 2 * v->Position();
 		}
 		else if (valenceVertices.size() == 3)
 		{
-			t2 = valenceVertices[1]->Position - v->Position;
+			t2 = valenceVertices[1]->Position() - v->Position();
 		}
 		else
 		{
@@ -354,13 +354,13 @@ Vector3d ComputeVertexNormalOne(Vertex* v)
 			Vector3d tmp;
 			for (int i = 1; i < k - 1; i++)
 			{
-				tmp += sin(i*theta) * valenceVertices[i]->Position;
+				tmp += sin(i*theta) * valenceVertices[i]->Position();
 			}
-			t2 = sin(theta)*(valenceVertices[0]->Position + valenceVertices[k - 1]->Position)
+			t2 = sin(theta)*(valenceVertices[0]->Position() + valenceVertices[k - 1]->Position())
 				+ (2 * cos(theta) - 2) * tmp;
 		}
 	}
-	Vector3d normal = t1.Cross(t2)/(t1.Cross(t2)).L2Norm(); //Remember to normalize later
+	Vector3d normal = t1.Cross(t2)/(t1.Cross(t2)).L2Norm();
 	v->SetNormal(normal);
 }
 
@@ -383,15 +383,31 @@ void Mesh::UmbrellaSmooth()
 
 	Matrix L(n, n);
 	std::vector<Vertex*> adj_vertices;
+	std::vector<double> weights;
 	for (int i = 0; i < n; i++)
 	{
 		OneRingVertex ring(vList[i]);
 		Vertex *curr = NULL;
 		adj_vertices.clear();
+		weights.clear();
 		while (curr = ring.NextVertex())
 		{
 			adj_vertices.push_back(curr);
 		}
+		int num_adj = adj_vertices.size();
+		double weight_sum = 0;
+		double w = Cot(adj_vertices[0]->Position(), adj_vertices[num_adj - 1]->Position(), vList[i]->Position())
+			+ Cot(adj_vertices[0]->Position(), adj_vertices[1]->Position(), vList[i]->Position());
+		weights.push_back(w);
+		weight_sum += w;
+		for (int s = 1; s < num_adj; s++)
+		{ 
+			w = Cot(adj_vertices[s]->Position(), adj_vertices[(s - 1) % num_adj]->Position(), vList[i]->Position())
+				+ Cot(adj_vertices[s]->Position(), adj_vertices[(s + 1) % num_adj]->Position(), vList[i]->Position());
+			weights.push_back(w);
+			weight_sum += w;
+		}
+
 		for (int j = 0; j < n; j++)
 		{
 			if (i == j)
