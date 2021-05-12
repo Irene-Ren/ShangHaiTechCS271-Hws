@@ -369,6 +369,45 @@ void Mesh::UmbrellaSmooth()
 	/*************************/
 	/* insert your code here */
 	/*************************/
+	int n = vList.size();
+	
+	double* inX = new double[n];
+	double* inY = new double[n];
+	double* inZ = new double[n];
+	for (int i = 0; i < n; i++)
+	{
+		inX[i] = vList[i]->Position().X();
+		inY[i] = vList[i]->Position().Y();
+		inZ[i] = vList[i]->Position().Z();
+	}
+
+	Matrix L(n, n);
+	std::vector<Vertex*> adj_vertices;
+	for (int i = 0; i < n; i++)
+	{
+		OneRingVertex ring(vList[i]);
+		Vertex *curr = NULL;
+		adj_vertices.clear();
+		while (curr = ring.NextVertex())
+		{
+			adj_vertices.push_back(curr);
+		}
+		for (int j = 0; j < n; j++)
+		{
+			if (i == j)
+			{
+				L.AddElement(i, j, -1);
+			}
+			else if (IsInList(vList[i], adj_vertices))
+			{
+				//TODO: add weight by using cot
+			}
+		}
+	}
+
+	double* outX = new double[n];
+	double* outY = new double[n];
+	double* outZ = new double[n];
 }
 
 void Mesh::ImplicitUmbrellaSmooth()

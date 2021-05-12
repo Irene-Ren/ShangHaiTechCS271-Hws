@@ -240,7 +240,6 @@ public:
 	int CountConnectedComponents();
 	std::vector<Vertex*> VerticesAllChecked();
 	void ClearFlags();
-	Vector3d ComputeVertexNormalOne(Vertex* v);
 };
 
 // other helper functions
@@ -249,4 +248,6 @@ inline void SetTwin(HEdge *e1, HEdge *e2) { e1->SetTwin(e2); e2->SetTwin(e1); }
 inline void SetFace(Face *f, HEdge *e) { f->SetHalfEdge(e); e->SetFace(f); }
 bool IsInList(Vertex* v, std::vector<Vertex*> vertexList);
 void BFSConnected(std::vector<Vertex*> vertexList);
+Vector3d ComputeVertexNormalOne(Vertex* v);
+
 #endif // __MESH_H__

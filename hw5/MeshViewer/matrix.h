@@ -76,7 +76,7 @@ public:
 	/////////////////////////////////////
 	// function AddElement
 	// add a new entry into the matrix
-	void AddElement(int row, int col, int value)
+	void AddElement(int row, int col, double value)
 	{
 		elements.push_back(MatrixElement(row, col, value));
 	}
