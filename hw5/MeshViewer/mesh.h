@@ -246,7 +246,7 @@ public:
 inline void SetPrevNext(HEdge *e1, HEdge *e2) { e1->SetNext(e2); e2->SetPrev(e1); }
 inline void SetTwin(HEdge *e1, HEdge *e2) { e1->SetTwin(e2); e2->SetTwin(e1); }
 inline void SetFace(Face *f, HEdge *e) { f->SetHalfEdge(e); e->SetFace(f); }
-bool IsInList(Vertex* v, std::vector<Vertex*> vertexList);
+int IsInList(Vertex* v, std::vector<Vertex*> vertexList);
 void BFSConnected(std::vector<Vertex*> vertexList);
 Vector3d ComputeVertexNormalOne(Vertex* v);
 

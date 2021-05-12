@@ -269,16 +269,16 @@ void Mesh::ClearFlags()
 		bheList[i]->SetFlag(false);
 	}
 }
-bool IsInList(Vertex* v,std::vector<Vertex*> vertexList)
+int IsInList(Vertex* v,std::vector<Vertex*> vertexList)
 {
 	for (int i = 0; i < vertexList.size(); i++)
 	{
 		if (vertexList[i] == v)
 		{
-			return true;
+			return i;
 		}
 	}
-	return false;
+	return -1;
 }
 void BFSConnected(std::vector<Vertex*> vertexList)
 {
@@ -296,7 +296,7 @@ void BFSConnected(std::vector<Vertex*> vertexList)
 			Vertex *curr = NULL;
 			while (curr = ring.NextVertex())
 			{
-				if (curr->Flag() == 0 && !IsInList(curr,vertexList_i))
+				if (curr->Flag() == 0 && IsInList(curr,vertexList_i) == -1)
 				{
 					vertexList_i.push_back(curr);
 				}
@@ -410,20 +410,33 @@ void Mesh::UmbrellaSmooth()
 
 		for (int j = 0; j < n; j++)
 		{
+			int index = IsInList(vList[j], adj_vertices);
 			if (i == j)
 			{
 				L.AddElement(i, j, -1);
 			}
-			else if (IsInList(vList[i], adj_vertices))
+			else if (index != -1)
 			{
 				//TODO: add weight by using cot
+				//TODO: Change IsInList() to int type returning the position if found in list
+				L.AddElement(i, j, weights[index] / weight_sum);
 			}
 		}
 	}
+	L.SortMatrix();
 
 	double* outX = new double[n];
 	double* outY = new double[n];
 	double* outZ = new double[n];
+	L.Multiply(inX, outX);
+	L.Multiply(inY, outY);
+	L.Multiply(inZ, outZ);
+
+	for (int k = 0; k < n; k++)
+	{
+		Vector3d v(outX[k], outY[k], outZ[k]);
+		vList[k]->SetPosition(v);
+	}
 }
 
 void Mesh::ImplicitUmbrellaSmooth()
