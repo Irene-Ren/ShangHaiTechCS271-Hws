@@ -369,81 +369,34 @@ void Mesh::UmbrellaSmooth()
 	/*************************/
 	/* insert your code here */
 	/*************************/
-	int n = vList.size();
-	double lambda = 0.5;
-	
-	double* inX = new double[n];
-	double* inY = new double[n];
-	double* inZ = new double[n];
-	for (int i = 0; i < n; i++)
+	for (size_t i = 0; i < vList.size(); i++)
 	{
-		inX[i] = vList[i]->Position().X();
-		inY[i] = vList[i]->Position().Y();
-		inZ[i] = vList[i]->Position().Z();
-	}
-
-	Matrix L(n, n);
-	std::vector<Vertex*> adj_vertices;
-	std::vector<double> weights;
-	for (int i = 0; i < n; i++)
-	{
-		L.AddElement(i, i, -1 * lambda);
-
-		OneRingVertex ring(vList[i]);
-		Vertex *curr = NULL;
-		adj_vertices.clear();
-		weights.clear();
-		while (curr = ring.NextVertex())
+		Vertex* v = vList[i];
+		if (v->IsBoundary())continue;
+		OneRingHEdge ring(v);
+		HEdge*curr = NULL;
+		double cot_sum = 0;
+		double cot_all_sum = 0;
+		double v_A = 0;
+		double v_A_1 = 0;
+		Vector3d color_v(0.0, 0.0, 0.0);
+		while (curr = ring.NextHEdge())
 		{
-			adj_vertices.push_back(curr);
-		}
-		int num_adj = adj_vertices.size();
-		double weight_sum = 0;
-		double w = Cot(adj_vertices[0]->Position(), adj_vertices[num_adj - 1]->Position(), vList[i]->Position())
-			+ Cot(adj_vertices[0]->Position(), adj_vertices[1]->Position(), vList[i]->Position());
-		weights.push_back(w);
-		weight_sum += w;
-		for (int s = 1; s < num_adj; s++)
-		{ 
-			w = Cot(adj_vertices[s]->Position(), adj_vertices[(s - 1) % num_adj]->Position(), vList[i]->Position())
-				+ Cot(adj_vertices[s]->Position(), adj_vertices[(s + 1) % num_adj]->Position(), vList[i]->Position());
-			weights.push_back(w);
-			weight_sum += w;
-		}
-		for (int t = 0; t < num_adj; t++)
-		{
-			L.AddElement(i, adj_vertices[t]->Index(), weights[t] / weight_sum * lambda);
+			if (!curr->IsBoundary())
+			{
+				const Vector3d & pos1 = v->Position();//p1
+				const Vector3d & pos2 = curr->End()->Position();//p2
+				const Vector3d & pos3 = curr->Prev()->Start()->Position();//p3
+				const Vector3d & pos4 = curr->Prev()->Twin()->Prev()->Start()->Position();//p4, for computing the mean curvature
+				cot_sum = Cot(pos1, pos2, pos3) + Cot(pos1, pos4, pos3);
+				cot_all_sum += cot_sum;
+				color_v = color_v + cot_sum * (pos3 - pos1);
+				v_A_1 = Area(pos1, pos2, pos3);
+				v_A = v_A + v_A_1;//SUM
+			}
 		}
 
-		//for (int j = 0; j < n; j++)
-		//{
-		//	int index = IsInList(vList[j], adj_vertices);
-		//	if (i == j)
-		//	{
-		//		L.AddElement(i, j, -1);
-		//	}
-		//	else if (index != -1)
-		//	{
-		//		//TODO: add weight by using cot
-		//		//TODO: Change IsInList() to int type returning the position if found in list
-		//		L.AddElement(i, j, weights[index] / weight_sum);
-		//	}
-		//}
-	}
-	L.SortMatrix();
-
-	double* outX = new double[n];
-	double* outY = new double[n];
-	double* outZ = new double[n];
-	L.Multiply(inX, outX);
-	L.Multiply(inY, outY);
-	L.Multiply(inZ, outZ);
-
-	for (int k = 0; k < n; k++)
-	{
-		Vector3d v(outX[k], outY[k], outZ[k]);
-		Vector3d v_in(inX[k], inY[k], inZ[k]);
-		vList[k]->SetPosition(v+v_in);
+		v->SetPosition(v->Position() + 0.00005*color_v / v_A);
 	}
 	std::cout << "Smoothing Finished" << std::endl;
 }
