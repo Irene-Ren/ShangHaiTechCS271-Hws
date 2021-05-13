@@ -421,10 +421,6 @@ void Mesh::UmbrellaSmooth()
 				//TODO: Change IsInList() to int type returning the position if found in list
 				L.AddElement(i, j, weights[index] / weight_sum);
 			}
-			else
-			{
-				L.AddElement(i, j, 0);
-			}
 		}
 	}
 	L.SortMatrix();
@@ -439,8 +435,10 @@ void Mesh::UmbrellaSmooth()
 	for (int k = 0; k < n; k++)
 	{
 		Vector3d v(outX[k], outY[k], outZ[k]);
-		vList[k]->SetPosition(v);
+		Vector3d v_in(inX[k], inY[k], inZ[k]);
+		vList[k]->SetPosition(v+v_in);
 	}
+	std::cout << "Smoothing Finished" << std::endl;
 }
 
 void Mesh::ImplicitUmbrellaSmooth()
