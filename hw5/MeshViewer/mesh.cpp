@@ -370,6 +370,7 @@ void Mesh::UmbrellaSmooth()
 	/* insert your code here */
 	/*************************/
 	int n = vList.size();
+	double lambda = 0.5;
 	
 	double* inX = new double[n];
 	double* inY = new double[n];
@@ -386,6 +387,8 @@ void Mesh::UmbrellaSmooth()
 	std::vector<double> weights;
 	for (int i = 0; i < n; i++)
 	{
+		L.AddElement(i, i, -1 * lambda);
+
 		OneRingVertex ring(vList[i]);
 		Vertex *curr = NULL;
 		adj_vertices.clear();
@@ -407,21 +410,25 @@ void Mesh::UmbrellaSmooth()
 			weights.push_back(w);
 			weight_sum += w;
 		}
-
-		for (int j = 0; j < n; j++)
+		for (int t = 0; t < num_adj; t++)
 		{
-			int index = IsInList(vList[j], adj_vertices);
-			if (i == j)
-			{
-				L.AddElement(i, j, -1);
-			}
-			else if (index != -1)
-			{
-				//TODO: add weight by using cot
-				//TODO: Change IsInList() to int type returning the position if found in list
-				L.AddElement(i, j, weights[index] / weight_sum);
-			}
+			L.AddElement(i, adj_vertices[t]->Index(), weights[t] / weight_sum * lambda);
 		}
+
+		//for (int j = 0; j < n; j++)
+		//{
+		//	int index = IsInList(vList[j], adj_vertices);
+		//	if (i == j)
+		//	{
+		//		L.AddElement(i, j, -1);
+		//	}
+		//	else if (index != -1)
+		//	{
+		//		//TODO: add weight by using cot
+		//		//TODO: Change IsInList() to int type returning the position if found in list
+		//		L.AddElement(i, j, weights[index] / weight_sum);
+		//	}
+		//}
 	}
 	L.SortMatrix();
 
