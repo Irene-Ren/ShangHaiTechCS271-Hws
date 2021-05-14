@@ -1,3 +1,7 @@
+/**
+* Sparse Matrix
+*/
+
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
 
@@ -5,20 +9,20 @@
 #include <vector>
 #include <algorithm>
 
-///////////////////////////////////////
-// struct MatrixElement
-// elements of Matrix class, represent non-zero entry in a matrix
+
+
+// entry in a matrix
 struct MatrixElement
 {
-	int row, col;	// row and column of the element
-	double value;	// value of the element
+	int row, col;
+	double value;
 
-	// constructor
 	MatrixElement(int r, int c, double v)
-		: row(r), col(c), value(v) {}
+		: row(r), col(c), value(v)
+	{}
 
-	// compare function for Matrix::SortMatrix() function
-	static bool order (MatrixElement e1, MatrixElement e2)
+	// upper left elementes are "smaller"
+	static bool order(MatrixElement e1, MatrixElement e2)
 	{
 		if (e1.row < e2.row) return true;
 		if (e1.row == e2.row) return (e1.col < e2.col);
@@ -26,16 +30,18 @@ struct MatrixElement
 	}
 };
 
-// class declaration
 typedef std::vector<MatrixElement> MatrixElementList;
 
-// class Matrix definition
-class Matrix 
+// Sparse Matrix
+class Matrix
 {
 private:
-	int m, n;	// size of matrix (m = # of rows, n # of columns)
-	MatrixElementList elements;	// list of non-zero entries
-	int * rowIndex;				// row indice of non-zero entries
+	int m, n;
+
+
+
+	// stores the index of each element in a row
+	int * rowIndex;
 
 	// fields for CG method
 	double* diagInv;
@@ -46,12 +52,13 @@ private:
 	double* q;
 	double* s;
 	double* s2;
+	double* tmp;
 
 public:
-	// constructor & destructor
-	Matrix(int m, int n) : m(m), n(n) 
+	MatrixElementList elements;
+	Matrix(int m, int n) : m(m), n(n)
 	{
-		rowIndex = new int[m+1]; 
+		rowIndex = new int[m + 1];
 		diagInv = new double[m];
 		r = new double[m];
 		r2 = new double[m];
@@ -60,10 +67,11 @@ public:
 		q = new double[m];
 		s = new double[m];
 		s2 = new double[m];
+		tmp = new double[m];
 	}
-	~Matrix() 
+	~Matrix()
 	{
-		delete[] rowIndex; 
+		delete[] rowIndex;
 		delete[] r;
 		delete[] r2;
 		delete[] d;
@@ -73,82 +81,148 @@ public:
 		delete[] s2;
 	}
 
-	/////////////////////////////////////
-	// function AddElement
-	// add a new entry into the matrix
 	void AddElement(int row, int col, double value)
 	{
 		elements.push_back(MatrixElement(row, col, value));
 	}
+	int RowSize() const { return m; }
+	int ColSize() const { return n; }
 
-	/////////////////////////////////////
-	// function SortMatrix
-	// sort the matrix elements after you add ALL elements into the matrix
+	const MatrixElementList & Elements() const { return elements; }
+
+	int * RowIndex() const { return rowIndex; }
+
 	void SortMatrix()
 	{
-		sort(elements.begin( ), elements.end( ), MatrixElement::order);
+		sort(elements.begin(), elements.end(), MatrixElement::order);
 
-		for (int i=0; i<m+1; i++)
+		for (int i = 0; i < m + 1; i++)
 			rowIndex[i] = 0;
-		for (int i=0; i<(int)elements.size(); i++)
+		for (int i = 0; i < (int)elements.size(); i++)
 			rowIndex[elements[i].row + 1] = i + 1;
 
-		for (int i=0; i<m; i++)
+		for (int i = 0; i < m; i++)
 			diagInv[i] = 0;
-		for (int i=0; i<(int)elements.size(); i++)
+		for (int i = 0; i < (int)elements.size(); i++)
 			if (elements[i].row == elements[i].col)
 				diagInv[elements[i].row] = 1.0 / elements[i].value;
 	}
 
-
-	/////////////////////////////////////
-	// function Multiply
-	// compute A * xIn = xOut
-	// the arrays pointed by xIn and xOut have to be pre-allocated 
-	// and have enough space
-	void Multiply(double* xIn, double* xOut)
+	/*
+	//fetch element value
+	double GetElement(int row_1, int col_1)//1013
 	{
-		for (int i=0; i<m; i++)
+	return elements[row_1*n + col_1].value;
+	}
+	*/
+	void Multiply(double* xIn, double* xOut)//Suppose the Matrix is M, then xOut = M*xIn;
+	{
+		for (int i = 0; i < m; i++)//IN OUR SETTING, XOUT HAS 3*M ELEMENTS
 		{
 			double sum = 0;
-			for (int j=rowIndex[i]; j<rowIndex[i+1]; j++)
+			for (int j = rowIndex[i]; j < rowIndex[i + 1]; j++)
 				sum += elements[j].value * xIn[elements[j].col];
 			xOut[i] = sum;
 		}
 	}
-	/////////////////////////////////////
-	// Multiply PreMultiply
-	// compute xIn * A = xOut
-	// the arrays pointed by xIn and xOut have to be pre-allocated 
-	// and have enough space
-	void PreMultiply(double* xIn, double* xOut)
-	{
-		for (int i=0; i<n; i++) xOut[i] = 0;
 
-		for (int i=0; i<m; i++)
+	void PreMultiply(double* xIn, double* xOut)//Suppose the Matrix is M, then xOut = xIn*M
+	{
+		for (int i = 0; i < n; i++) xOut[i] = 0;
+
+		for (int i = 0; i < m; i++)
 		{
-			for (int j=rowIndex[i]; j<rowIndex[i+1]; j++)
+			for (int j = rowIndex[i]; j < rowIndex[i + 1]; j++)
 				xOut[elements[j].col] += elements[j].value * xIn[i];
 		}
 	}
 
-	/**********************************************/
-	/* function: BCG                              */
-	/* description: solve Ax = b for unknowns x   */
-	/**********************************************/
-	void BCG(double* b, double* x)
+
+	// solve the linear system Ax = b by using Bi-Conjugete Gradient Method
+	void BCG(double* b, double* x, int maxIter, double tolerance)
 	{
-		/*************************/
-		/* insert your code here */
-		/*************************/
+		int iter;
+		double errNew;
+		double errOld;
+		double err;
+
+		iter = 0;
+		Multiply(x, r);
+		// initialize the variables
+		double temp;
+		for (int i = 0; i < m; i++)
+		{
+			d2[i] = d[i] = r2[i] = r[i] = b[i] - r[i];
+			temp = d2[i];
+		}
+
+		errNew = 0;
+		for (int i = 0; i < m; i++) errNew += r2[i] * r[i];
+		err = abs(errNew);
+
+		while (iter<maxIter && abs(errNew) > tolerance*err)
+		{
+			cout << errNew << " " << tolerance * err << endl;
+
+			Multiply(d, q);
+
+			double alpha = 0;
+			for (int i = 0; i < m; i++) alpha += d2[i] * q[i];
+			alpha = errNew / alpha;
+			for (int i = 0; i < m; i++) x[i] += alpha * d[i];
+
+			if (iter % 50 == 0)
+			{
+				Multiply(x, r);
+				for (int i = 0; i < m; i++) r[i] = b[i] - r[i];
+				PreMultiply(d2, q);
+				for (int i = 0; i < m; i++) r2[i] -= alpha * q[i];
+			}
+			else
+			{
+				for (int i = 0; i < m; i++) r[i] -= alpha * q[i];
+				PreMultiply(d2, q);
+				for (int i = 0; i < m; i++) r2[i] -= alpha * q[i];
+			}
+
+			errOld = errNew;
+			errNew = 0;
+			for (int i = 0; i < m; i++) errNew += r2[i] * r[i];
+			double beta = errNew / errOld;
+			for (int i = 0; i < m; i++) d[i] = r[i] + beta * d[i];
+			for (int i = 0; i < m; i++) d2[i] = r2[i] + beta * d2[i];
+			iter++;
+		}
+
+		cout << errNew << " " << tolerance * err << endl;
+		cout << "iter: " << iter << endl;
 	}
 
-	// friend operators
-	friend ostream & operator<< (ostream & out, const Matrix & r) 
+
+	void VecSubtract(double* lhs, double* rhs, double* result, int n)
 	{
-		for (int i=0; i<r.m; i++)
+		for (int i = 0; i < n; i++)
 		{
-			for(int j=r.rowIndex[i]; j<r.rowIndex[i+1]; j++)
+			result[i] = lhs[i] - rhs[i];
+		}
+	}
+
+	double VecDot(double* rhs, double* lhs, int n)
+	{
+		double r = 0;
+		for (int i = 0; i < n; i++)
+		{
+			r += rhs[i] * lhs[i];
+		}
+		return r;
+	}
+
+
+	friend ostream & operator<< (ostream & out, const Matrix & r)
+	{
+		for (int i = 0; i < r.m; i++)
+		{
+			for (int j = r.rowIndex[i]; j < r.rowIndex[i + 1]; j++)
 				out << r.elements[j].value << " ";
 			out << endl;
 		}

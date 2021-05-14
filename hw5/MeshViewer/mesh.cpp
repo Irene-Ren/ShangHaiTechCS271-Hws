@@ -372,7 +372,7 @@ void Mesh::UmbrellaSmooth()
 	//construct matrix L
 	
 
-	double lambda = 0.8;//set lambda = 0.8 for 'Xt1 = Xt + lambda*L*Xt'
+	double lambda = 0.5;//set lambda = 0.8 for 'Xt1 = Xt + lambda*L*Xt'
 	double cot_next = 0.0;//reset cot_nex
 
 	int n = vList.size();
@@ -407,7 +407,7 @@ void Mesh::UmbrellaSmooth()
 			{
 				if (!curr->IsBoundary())
 				{
-					adj_vertices.push_back(curr->Prev()->Start());
+					adj_vertices.push_back(curr->End());
 					const Vector3d& p1 = v->Position();
 					const Vector3d& p2 = curr->End()->Position();
 					const Vector3d& p3 = curr->Prev()->Start()->Position();
@@ -427,6 +427,7 @@ void Mesh::UmbrellaSmooth()
 
 	//sort matrix L
 	L.SortMatrix();
+	//std::cout << L << endl;
 
 	double* outX = new double[n];
 	double* outY = new double[n];
