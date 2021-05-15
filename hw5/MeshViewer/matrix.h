@@ -34,7 +34,6 @@ class Matrix
 {
 private:
 	int m, n;	// size of matrix (m = # of rows, n # of columns)
-	MatrixElementList elements;	// list of non-zero entries
 	int * rowIndex;				// row indice of non-zero entries
 
 	// fields for CG method
@@ -48,6 +47,7 @@ private:
 	double* s2;
 
 public:
+	MatrixElementList elements;	// list of non-zero entries
 	// constructor & destructor
 	Matrix(int m, int n) : m(m), n(n) 
 	{
@@ -131,7 +131,36 @@ public:
 				xOut[elements[j].col] += elements[j].value * xIn[i];
 		}
 	}
-
+	double VectorDotProduct(double* v1, double* v2, int n)
+	{
+		double result = 0.0;
+		for (int i = 0; i < n; i++)
+		{
+			result += v1[i] * v2[i];
+		}
+		return result;
+	}
+	void VectorMinus(double* v1, double* v2, double* result, int n)
+	{
+		for (int i = 0; i < n; i++)
+		{
+			result[i] = v1[i] - v2[i];
+		}
+	}
+	void VectorAddEqual(double* self, double* v2, int n)
+	{
+		for (int i = 0; i < n; i++)
+		{
+			self[i] += v2[i];
+		}
+	}
+	void VectorMultiply(double* v, double num, double* result, int n)
+	{
+		for (int i = 0; i < n; i++)
+		{
+			result[i] = v[i] * num;
+		}
+	}
 	/**********************************************/
 	/* function: BCG                              */
 	/* description: solve Ax = b for unknowns x   */
@@ -217,34 +246,5 @@ public:
 		return out;
 	}
 };
-double VectorDotProduct(double* v1, double* v2, int n)
-{
-	double result = 0.0;
-	for (int i = 0; i < n; i++)
-	{
-		result += v1[i] * v2[i];
-	}
-	return result;
-}
-void VectorMinus(double* v1, double* v2, double* result, int n)
-{
-	for (int i = 0; i < n; i++)
-	{
-		result[i] = v1[i] - v2[i];
-	}
-}
-void VectorAddEqual(double* self, double* v2, int n)
-{
-	for (int i = 0; i < n; i++)
-	{
-		self[i] += v2[i];
-	}
-}
-void VectorMultiply(double* v, double num, double* result, int n)
-{
-	for (int i = 0; i < n; i++)
-	{
-		result[i] = v[i] * num;
-	}
-}
+
 #endif __MATRIX_H__

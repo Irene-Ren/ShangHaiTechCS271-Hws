@@ -471,6 +471,90 @@ void Mesh::ImplicitUmbrellaSmooth()
 	/*************************/
 	/* insert your code here */
 	/*************************/
+	int n = vList.size();
+	double *X, *Y, *Z, *X_out, *Y_out, *Z_out;
+	X = new double[n];
+	Y = new double[n];
+	Z = new double[n];
+	X_out = new double[n];
+	Y_out = new double[n];
+	Z_out = new double[n];
+	Matrix A(n, n);
+	//give a lamda
+	double lamda = 0.9;
+	//Iterite and assign value
+	for (size_t i = 0; i < n; i++)
+	{
+		Vertex *v = vList[i];
+		X[i] = v->Position()[0];
+		Y[i] = v->Position()[1];
+		Z[i] = v->Position()[2];
+		X_out[i] = v->Position()[0];
+		Y_out[i] = v->Position()[1];
+		Z_out[i] = v->Position()[2];
+		if (v->IsBoundary())
+		{
+			A.AddElement(i, i, 1);
+			continue;
+		}
+		OneRingHEdge ring(v);
+		HEdge*curr = NULL;
+		double cot_sum = 0;
+		double cot_all_sum = 0;
+		double v_A = 0;
+		double v_A_1 = 0;
+		//Vector3d color_v(0.0, 0.0, 0.0);
+		while (curr = ring.NextHEdge())
+		{
+			if (!curr->IsBoundary())
+			{
+				const Vector3d & pos1 = v->Position();//p1
+				const Vector3d & pos2 = curr->End()->Position();//p2
+				const Vector3d & pos3 = curr->Prev()->Start()->Position();//p3
+				const Vector3d & pos4 = curr->Prev()->Twin()->Prev()->Start()->Position();//p4, for computing the mean curvature
+				cot_sum = Cot(pos1, pos2, pos3) + Cot(pos1, pos4, pos3);
+				cot_all_sum += cot_sum;
+				//color_v = color_v + cot_sum*(pos3 - pos1);
+				v_A_1 = Area(pos1, pos2, pos3);
+				v_A = v_A + v_A_1;//SUM
+
+				A.AddElement(i, curr->End()->Index(), -lamda * cot_sum);
+			}
+		}
+		//end of iterating a row
+		for (int j = 0; j < A.elements.size(); j++)
+		{
+			if (A.elements[j].row == i)
+			{
+				A.elements[j].value /= cot_all_sum;
+			}
+		}
+		A.AddElement(i, i, 1 + lamda * cot_all_sum / cot_all_sum);
+
+	}
+
+	A.SortMatrix();
+	/*A.Multiply(X, X_out);
+	A.Multiply(Y, Y_out);
+	A.Multiply(Z, Z_out);*/
+	A.BCG(X, X_out, 1, 0.1);
+	A.BCG(Y, Y_out, 1, 0.1);
+	A.BCG(Z, Z_out, 1, 0.1);
+	for (size_t i = 0; i < n; i++)
+	{
+		Vertex *v = vList[i];
+		if (v->IsBoundary())
+		{
+			continue;
+		}
+		v->SetPosition(Vector3d(X_out[i], Y_out[i], Z_out[i]));
+	}
+	delete X;
+	delete Y;
+	delete Z;
+	delete X_out;
+	delete Y_out;
+	delete Z_out;
 }
 void Mesh::ComputeVertexCurvatures()
 {
