@@ -370,8 +370,6 @@ void Mesh::UmbrellaSmooth()
 	/* insert your code here */
 	/*************************/
 	//construct matrix L
-	
-
 	double lambda = 0.5;//set lambda = 0.8 for 'Xt1 = Xt + lambda*L*Xt'
 	double cot_next = 0.0;//reset cot_nex
 
