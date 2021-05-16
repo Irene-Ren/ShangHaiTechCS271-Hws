@@ -562,6 +562,8 @@ void Mesh::ComputeVertexCurvatures()
 	/* insert your code here */
 	/*************************/
 	int n = vList.size();
+	double max_curv = -1000000;
+	double min_curv = 1000000;
 	for (int i = 0; i < n; i++)
 	{
 		//compute 'w_sum': the sum of weight incident to the current vertex
@@ -588,8 +590,32 @@ void Mesh::ComputeVertexCurvatures()
 				}
 			}
 			double H = -color.L2Norm() / (4 * area_sum);
+			v->H = H;
+			if (min_curv > H)
+			{
+				min_curv = H;
+			}
+			if (max_curv < H)
+			{
+				max_curv = H;
+			}
 		}
 		
+	}
+	//"mean curvature" scheme
+	for (int i=0; i< vList.size(); i++) 
+	{ 
+	 	if(vList[i]->IsBoundary())//process interior vertices
+	 	{
+			Vector3d color_mean(0.0, 0.0, 0.0);
+			vList[i]->SetColor(color_mean);
+	 		
+	 	}
+	 	else //process boundary vertices
+	 	{
+			Vector3d color_mean((vList[i]->H - min_curv) / (max_curv - min_curv), 0.5, 1 - (vList[i]->H - min_curv) / (max_curv - min_curv));
+			vList[i]->SetColor(color_mean);
+	 	}
 	}
 }
 

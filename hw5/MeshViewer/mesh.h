@@ -105,6 +105,7 @@ private:
     int flag;           // 0 for unselected, 1 for selected
     bool valid;
 public:
+	double H;			// mean curvature
 	vector<HEdge*> adjHEdges; // for reading object only, do not use it in other place
 
 	// constructors
