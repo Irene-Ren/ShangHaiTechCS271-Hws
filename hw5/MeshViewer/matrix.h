@@ -171,44 +171,46 @@ public:
 		/* insert your code here */
 		/*************************/
 		int iter = 0;
-		double error = 0.0;
 
 		// Calculate A*x and put the result in vector r (double*)
 		Multiply(x, r);
+
 		// Setup for the initial values for r, r^T(r2), d, d^T(d2)
-		// Note that 
-		VectorMinus(b, r, r, m);
-		VectorMinus(b, r, r2, m);
-		VectorMinus(b, r, d, m);
-		VectorMinus(b, r, d2, m);
+		for (int i = 0; i < m; i++)
+		{
+			d2[i] = b[i] - r[i]; 
+			d[i] = b[i] - r[i]; 
+			r2[i] = b[i] - r[i]; 
+			r[i] = b[i] - r[i];
+		}
 
-		// The numerator of alpha
 		double numerator_a = VectorDotProduct(r2, r, m);
+		double error = abs(numerator_a);
 
-		// Setup initial error value
-		error = abs(numerator_a);
-
-		while (iter < maxIterCnt)
+		while (iter<maxIterCnt)
 		{
 			if (abs(numerator_a) < tolerance*error)
 			{
 				break;
 			}
-			// Save A*d in vector q
+			cout << numerator_a << " " << tolerance * error << endl;
+
 			Multiply(d, q);
 
-			// begin to calculate alpha
-			// alpha(i) = Dot(r(i),r(i))/d(i)*A*d(i)
 			double denominator_a = VectorDotProduct(d2, q, m);
 			double alpha = numerator_a / denominator_a;
 
 			// calculate x(i)
 			VectorMultiply(d, alpha, s, m); //Temporary saver s
 			VectorAddEqual(x, s, m);
+
 			if (iter % 50 == 0)
 			{
 				Multiply(x, r);
-				VectorMinus(b, r, r, m);
+				for (int i = 0; i < m; i++)
+				{
+					r[i] = b[i] - r[i];
+				}
 			}
 			else
 			{
@@ -232,6 +234,9 @@ public:
 
 			iter++;
 		}
+
+		cout << numerator_a << " " << tolerance * error << endl;
+		cout << "iter: " << iter << endl;
 	}
 
 	// friend operators

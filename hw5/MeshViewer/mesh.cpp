@@ -370,8 +370,7 @@ void Mesh::UmbrellaSmooth()
 	/* insert your code here */
 	/*************************/
 	//construct matrix L
-	double lambda = 0.5;//set lambda = 0.8 for 'Xt1 = Xt + lambda*L*Xt'
-	double cot_next = 0.0;//reset cot_nex
+	double lambda = 0.5;
 
 	int n = vList.size();
 	double* inX = new double[n];
@@ -471,95 +470,126 @@ void Mesh::ImplicitUmbrellaSmooth()
 	/*************************/
 	/* insert your code here */
 	/*************************/
-	int n = vList.size();
-	double *X, *Y, *Z, *X_out, *Y_out, *Z_out;
-	X = new double[n];
-	Y = new double[n];
-	Z = new double[n];
-	X_out = new double[n];
-	Y_out = new double[n];
-	Z_out = new double[n];
-	Matrix A(n, n);
-	//give a lamda
-	double lamda = 0.9;
-	//Iterite and assign value
-	for (size_t i = 0; i < n; i++)
-	{
-		Vertex *v = vList[i];
-		X[i] = v->Position()[0];
-		Y[i] = v->Position()[1];
-		Z[i] = v->Position()[2];
-		X_out[i] = v->Position()[0];
-		Y_out[i] = v->Position()[1];
-		Z_out[i] = v->Position()[2];
-		if (v->IsBoundary())
-		{
-			A.AddElement(i, i, 1);
-			continue;
-		}
-		OneRingHEdge ring(v);
-		HEdge*curr = NULL;
-		double cot_sum = 0;
-		double cot_all_sum = 0;
-		double v_A = 0;
-		double v_A_1 = 0;
-		//Vector3d color_v(0.0, 0.0, 0.0);
-		while (curr = ring.NextHEdge())
-		{
-			if (!curr->IsBoundary())
-			{
-				const Vector3d & pos1 = v->Position();//p1
-				const Vector3d & pos2 = curr->End()->Position();//p2
-				const Vector3d & pos3 = curr->Prev()->Start()->Position();//p3
-				const Vector3d & pos4 = curr->Prev()->Twin()->Prev()->Start()->Position();//p4, for computing the mean curvature
-				cot_sum = Cot(pos1, pos2, pos3) + Cot(pos1, pos4, pos3);
-				cot_all_sum += cot_sum;
-				//color_v = color_v + cot_sum*(pos3 - pos1);
-				v_A_1 = Area(pos1, pos2, pos3);
-				v_A = v_A + v_A_1;//SUM
+	double lambda = 0.5;
 
-				A.AddElement(i, curr->End()->Index(), -lamda * cot_sum);
-			}
-		}
-		//end of iterating a row
-		for (int j = 0; j < A.elements.size(); j++)
+	int n = vList.size();
+	double* inX = new double[n];
+	double* inY = new double[n];
+	double* inZ = new double[n];
+	double* outX = new double[n];
+	double* outY = new double[n];
+	double* outZ = new double[n];
+	for (int i = 0; i < n; i++)
+	{
+		inX[i] = vList[i]->Position().X();
+		outX[i] = vList[i]->Position().X();
+		inY[i] = vList[i]->Position().Y();
+		outY[i] = vList[i]->Position().Y();
+		inZ[i] = vList[i]->Position().Z();
+		outZ[i] = vList[i]->Position().Z();
+	}
+	Matrix L(n, n);
+
+	for (int i = 0; i < n; i++)
+	{
+
+		L.AddElement(i, i, 1+lambda);//add element to L
+		//compute 'w_sum': the sum of weight incident to the current vertex
+		Vertex* v = vList[i];
+		if (!v->IsBoundary())
 		{
-			if (A.elements[j].row == i)
+			OneRingHEdge ring(v);
+			HEdge* curr = NULL;
+			double w_sum = 0.0;//initialize the total weight of neighboring vertices of the current vertex
+			double w_local = 0.0;//weight due to the current neighboring vertex
+
+			vector<Vertex*> adj_vertices;
+			vector<double> weights;
+			while (curr = ring.NextHEdge())
 			{
-				A.elements[j].value /= cot_all_sum;
+				if (!curr->IsBoundary())
+				{
+					adj_vertices.push_back(curr->End());
+					const Vector3d& p1 = v->Position();
+					const Vector3d& p2 = curr->End()->Position();
+					const Vector3d& p3 = curr->Prev()->Start()->Position();
+					const Vector3d& p4 = curr->Prev()->Twin()->Prev()->Start()->Position();
+					w_local = Cot(p1, p2, p3) + Cot(p1, p4, p3);
+					weights.push_back(w_local);
+					w_sum += w_local;
+				}
+			}
+			for (int s = 0; s < adj_vertices.size(); s++)
+			{
+				L.AddElement(i, adj_vertices[s]->Index(), 0-lambda * weights[s] / w_sum);
 			}
 		}
-		A.AddElement(i, i, 1 + lamda * cot_all_sum / cot_all_sum);
 
 	}
 
-	A.SortMatrix();
+	//sort matrix L
+	L.SortMatrix();
 	/*A.Multiply(X, X_out);
 	A.Multiply(Y, Y_out);
 	A.Multiply(Z, Z_out);*/
-	A.BCG(X, X_out, 1, 0.1);
-	A.BCG(Y, Y_out, 1, 0.1);
-	A.BCG(Z, Z_out, 1, 0.1);
-	for (size_t i = 0; i < n; i++)
+	L.BCG(inX, outX, 10, 0.1);
+	L.BCG(inY, outY, 10, 0.1);
+	L.BCG(inZ, outZ, 10, 0.1);
+	delete inX;
+	delete inY;
+	delete inZ;
+
+	for (int i = 0; i < n; i++)
 	{
-		Vertex *v = vList[i];
-		if (v->IsBoundary())
+		if (!vList[i]->IsBoundary())
 		{
-			continue;
+			double x = outX[i];
+			double y = outY[i];
+			double z = outZ[i];
+
+			Vector3d new_pos(x, y, z);
+			vList[i]->SetPosition(new_pos);
 		}
-		v->SetPosition(Vector3d(X_out[i], Y_out[i], Z_out[i]));
 	}
-	delete X;
-	delete Y;
-	delete Z;
-	delete X_out;
-	delete Y_out;
-	delete Z_out;
+
+	delete outX;
+	delete outY;
+	delete outZ;
 }
 void Mesh::ComputeVertexCurvatures()
 {
 	/*************************/
 	/* insert your code here */
 	/*************************/
+	int n = vList.size();
+	for (int i = 0; i < n; i++)
+	{
+		//compute 'w_sum': the sum of weight incident to the current vertex
+		Vertex* v = vList[i];
+		if (!v->IsBoundary())
+		{
+			OneRingHEdge ring(v);
+			HEdge* curr = NULL;
+			double area_sum = 0.0;//initialize the total weight of neighboring vertices of the current vertex
+			double w_local = 0.0;//weight due to the current neighboring vertex
+			Vector3d color(0.0, 0.0, 0.0);
+
+			while (curr = ring.NextHEdge())
+			{
+				if (!curr->IsBoundary())
+				{
+					const Vector3d& p1 = v->Position();
+					const Vector3d& p2 = curr->End()->Position();
+					const Vector3d& p3 = curr->Prev()->Start()->Position();
+					const Vector3d& p4 = curr->Prev()->Twin()->Prev()->Start()->Position();
+					w_local = Cot(p1, p2, p3) + Cot(p1, p4, p3);
+					color += w_local * (p3 - p1);
+					area_sum += Area(p1, p2, p3);
+				}
+			}
+			double H = -color.L2Norm() / (4 * area_sum);
+		}
+		
+	}
 }
 

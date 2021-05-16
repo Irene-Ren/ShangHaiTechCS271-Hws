@@ -7,8 +7,7 @@ d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(267): 
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(274): warning C4018: '<': signed/unsigned mismatch
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(292): warning C4018: '<': signed/unsigned mismatch
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(316): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(418): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(486): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(525): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(543): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(417): warning C4018: '<': signed/unsigned mismatch
+d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(522): warning C4018: '<': signed/unsigned mismatch
+main.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
   pa1.vcxproj -> D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw5\MeshViewer\Debug\pa1.exe
