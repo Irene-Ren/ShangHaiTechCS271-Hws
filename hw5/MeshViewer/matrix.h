@@ -193,7 +193,7 @@ public:
 			{
 				break;
 			}
-			cout << numerator_a << " " << tolerance * error << endl;
+			//cout << numerator_a << " " << tolerance * error << endl;
 
 			Multiply(d, q);
 
@@ -235,8 +235,8 @@ public:
 			iter++;
 		}
 
-		cout << numerator_a << " " << tolerance * error << endl;
-		cout << "iter: " << iter << endl;
+		/*cout << numerator_a << " " << tolerance * error << endl;
+		cout << "iter: " << iter << endl;*/
 	}
 
 	// friend operators

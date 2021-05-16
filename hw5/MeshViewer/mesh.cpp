@@ -364,7 +364,7 @@ void ComputeVertexNormalOne(Vertex* v)
 	v->SetNormal(normal);
 }
 
-void Mesh::UmbrellaSmooth() 
+void Mesh::UmbrellaSmooth(bool is_mean)
 {
 	/*************************/
 	/* insert your code here */
@@ -391,35 +391,51 @@ void Mesh::UmbrellaSmooth()
 		L.AddElement(i, i, -lambda);//add element to L
 		//compute 'w_sum': the sum of weight incident to the current vertex
 		Vertex* v = vList[i];
-		if (!v->IsBoundary())
+
+		if (is_mean)
 		{
-			OneRingHEdge ring(v);
-			HEdge* curr = NULL;
-			double w_sum = 0.0;//initialize the total weight of neighboring vertices of the current vertex
-			double w_local = 0.0;//weight due to the current neighboring vertex
-			
-			vector<Vertex*> adj_vertices;
-			vector<double> weights;
-			while (curr = ring.NextHEdge())
+			if (!v->IsBoundary())
 			{
-				if (!curr->IsBoundary())
+				int k = v->Valence();
+				OneRingVertex vring(v);
+				Vertex* vcurr = NULL;
+				while (vcurr = vring.NextVertex())
 				{
-					adj_vertices.push_back(curr->End());
-					const Vector3d& p1 = v->Position();
-					const Vector3d& p2 = curr->End()->Position();
-					const Vector3d& p3 = curr->Prev()->Start()->Position();
-					const Vector3d& p4 = curr->Prev()->Twin()->Prev()->Start()->Position();
-					w_local = Cot(p1, p2, p3) + Cot(p1, p4, p3);
-					weights.push_back(w_local);
-					w_sum += w_local;
+					L.AddElement(i, vcurr->Index(), lambda / k);
 				}
 			}
-			for (int s = 0; s < adj_vertices.size(); s++)
+		}
+		else
+		{
+			if (!v->IsBoundary())
 			{
-				L.AddElement(i, adj_vertices[s]->Index(), lambda * weights[s] / w_sum);
+				OneRingHEdge ring(v);
+				HEdge* curr = NULL;
+				double w_sum = 0.0;//initialize the total weight of neighboring vertices of the current vertex
+				double w_local = 0.0;//weight due to the current neighboring vertex
+
+				vector<Vertex*> adj_vertices;
+				vector<double> weights;
+				while (curr = ring.NextHEdge())
+				{
+					if (!curr->IsBoundary())
+					{
+						adj_vertices.push_back(curr->End());
+						const Vector3d& p1 = v->Position();
+						const Vector3d& p2 = curr->End()->Position();
+						const Vector3d& p3 = curr->Prev()->Start()->Position();
+						const Vector3d& p4 = curr->Prev()->Twin()->Prev()->Start()->Position();
+						w_local = Cot(p1, p2, p3) + Cot(p1, p4, p3);
+						weights.push_back(w_local);
+						w_sum += w_local;
+					}
+				}
+				for (int s = 0; s < adj_vertices.size(); s++)
+				{
+					L.AddElement(i, adj_vertices[s]->Index(), lambda * weights[s] / w_sum);
+				}
 			}
 		}
-		
 	}
 
 	//sort matrix L
@@ -462,10 +478,10 @@ void Mesh::UmbrellaSmooth()
 	delete outY;
 	delete outZ;
 
-	cout << "done now " << endl;
+	cout << "Explicit Smoothing Finished " << endl;
 }
 
-void Mesh::ImplicitUmbrellaSmooth()
+void Mesh::ImplicitUmbrellaSmooth(bool is_mean)
 {
 	/*************************/
 	/* insert your code here */
@@ -496,35 +512,50 @@ void Mesh::ImplicitUmbrellaSmooth()
 		L.AddElement(i, i, 1+lambda);//add element to L
 		//compute 'w_sum': the sum of weight incident to the current vertex
 		Vertex* v = vList[i];
-		if (!v->IsBoundary())
+		if (is_mean)
 		{
-			OneRingHEdge ring(v);
-			HEdge* curr = NULL;
-			double w_sum = 0.0;//initialize the total weight of neighboring vertices of the current vertex
-			double w_local = 0.0;//weight due to the current neighboring vertex
-
-			vector<Vertex*> adj_vertices;
-			vector<double> weights;
-			while (curr = ring.NextHEdge())
+			if (!v->IsBoundary())
 			{
-				if (!curr->IsBoundary())
+				int k = v->Valence();
+				OneRingVertex vring(v);
+				Vertex* vcurr = NULL;
+				while (vcurr = vring.NextVertex())
 				{
-					adj_vertices.push_back(curr->End());
-					const Vector3d& p1 = v->Position();
-					const Vector3d& p2 = curr->End()->Position();
-					const Vector3d& p3 = curr->Prev()->Start()->Position();
-					const Vector3d& p4 = curr->Prev()->Twin()->Prev()->Start()->Position();
-					w_local = Cot(p1, p2, p3) + Cot(p1, p4, p3);
-					weights.push_back(w_local);
-					w_sum += w_local;
+					L.AddElement(i, vcurr->Index(), 0-lambda / k);
 				}
 			}
-			for (int s = 0; s < adj_vertices.size(); s++)
+		}
+		else
+		{
+			if (!v->IsBoundary())
 			{
-				L.AddElement(i, adj_vertices[s]->Index(), 0-lambda * weights[s] / w_sum);
+				OneRingHEdge ring(v);
+				HEdge* curr = NULL;
+				double w_sum = 0.0;//initialize the total weight of neighboring vertices of the current vertex
+				double w_local = 0.0;//weight due to the current neighboring vertex
+
+				vector<Vertex*> adj_vertices;
+				vector<double> weights;
+				while (curr = ring.NextHEdge())
+				{
+					if (!curr->IsBoundary())
+					{
+						adj_vertices.push_back(curr->End());
+						const Vector3d& p1 = v->Position();
+						const Vector3d& p2 = curr->End()->Position();
+						const Vector3d& p3 = curr->Prev()->Start()->Position();
+						const Vector3d& p4 = curr->Prev()->Twin()->Prev()->Start()->Position();
+						w_local = Cot(p1, p2, p3) + Cot(p1, p4, p3);
+						weights.push_back(w_local);
+						w_sum += w_local;
+					}
+				}
+				for (int s = 0; s < adj_vertices.size(); s++)
+				{
+					L.AddElement(i, adj_vertices[s]->Index(), 0 - lambda * weights[s] / w_sum);
+				}
 			}
 		}
-
 	}
 
 	//sort matrix L
@@ -555,6 +586,7 @@ void Mesh::ImplicitUmbrellaSmooth()
 	delete outX;
 	delete outY;
 	delete outZ;
+	cout << "Implicit Smoothing Finished " << endl;
 }
 void Mesh::ComputeVertexCurvatures()
 {

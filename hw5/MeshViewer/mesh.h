@@ -230,8 +230,8 @@ public:
 	void DisplayMeshInfo();
 	void ComputeVertexNormals();
 	void ComputeVertexCurvatures();
-	void UmbrellaSmooth();
-	void ImplicitUmbrellaSmooth();
+	void UmbrellaSmooth(bool is_mean = false);
+	void ImplicitUmbrellaSmooth(bool is_mean = false);
 	/************************************************************************/
 
 	// additional helper functions

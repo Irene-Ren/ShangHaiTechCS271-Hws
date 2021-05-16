@@ -35,6 +35,7 @@ double g_sdepth;
 Mesh mesh;	// our mesh
 
 bool hasDeletedVertex = false;
+bool meanOrCotangent = false;
 
 // functions
 void SetBoundaryBox(const Vector3d & bmin, const Vector3d & bmax);
@@ -381,7 +382,7 @@ void KeyboardFunc(unsigned char ch, int x, int y) {
 	case 'U':
 		/************************************************************************/
 		/* activate the following code if you finish the corresponding functions*/
- 		mesh.UmbrellaSmooth();
+ 		mesh.UmbrellaSmooth(meanOrCotangent);
  		mesh.ComputeVertexNormals();
  		mesh.ComputeVertexCurvatures();
 		/************************************************************************/
@@ -390,7 +391,7 @@ void KeyboardFunc(unsigned char ch, int x, int y) {
 	case 'S':
 		/************************************************************************/
 		/* activate the following code if you finish the corresponding functions*/
- 		mesh.ImplicitUmbrellaSmooth();
+ 		mesh.ImplicitUmbrellaSmooth(meanOrCotangent);
  		mesh.ComputeVertexNormals();
  		mesh.ComputeVertexCurvatures();
 		/************************************************************************/
@@ -574,6 +575,15 @@ void main(int argc, char **argv) {
 	InitMenu();
 	if (argc>=2) mesh.LoadObjFile(argv[1]);
 	else InitGeometry();
+	if (argc >= 3)
+	{
+		std::cout << "AHA " << (argv[2])<< std::endl;
+		meanOrCotangent = true;
+	}
+	if (meanOrCotangent)
+	{
+		std::cout << "Using uniform weights" << std::endl;
+	}
 	SetBoundaryBox(mesh.MinCoord(), mesh.MaxCoord());
 	
 	/************************************************************************/
