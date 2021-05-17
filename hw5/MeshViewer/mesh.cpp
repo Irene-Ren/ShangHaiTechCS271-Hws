@@ -370,7 +370,7 @@ void Mesh::UmbrellaSmooth(bool is_mean)
 	/* insert your code here */
 	/*************************/
 	//construct matrix L
-	double lambda = 0.5;
+	double lambda = 0.2;
 
 	int n = vList.size();
 	double* inX = new double[n];
@@ -486,7 +486,7 @@ void Mesh::ImplicitUmbrellaSmooth(bool is_mean)
 	/*************************/
 	/* insert your code here */
 	/*************************/
-	double lambda = 0.5;
+	double lambda = 0.2;
 
 	int n = vList.size();
 	double* inX = new double[n];
