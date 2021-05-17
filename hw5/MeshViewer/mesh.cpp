@@ -420,7 +420,7 @@ void Mesh::UmbrellaSmooth(bool is_mean)
 				{
 					if (!curr->IsBoundary())
 					{
-						adj_vertices.push_back(curr->End());
+						adj_vertices.push_back(curr->Prev()->Start());
 						const Vector3d& p1 = v->Position();
 						const Vector3d& p2 = curr->End()->Position();
 						const Vector3d& p3 = curr->Prev()->Start()->Position();
@@ -540,7 +540,7 @@ void Mesh::ImplicitUmbrellaSmooth(bool is_mean)
 				{
 					if (!curr->IsBoundary())
 					{
-						adj_vertices.push_back(curr->End());
+						adj_vertices.push_back(curr->Prev()->Start());
 						const Vector3d& p1 = v->Position();
 						const Vector3d& p2 = curr->End()->Position();
 						const Vector3d& p3 = curr->Prev()->Start()->Position();
@@ -617,7 +617,7 @@ void Mesh::ComputeVertexCurvatures()
 					const Vector3d& p3 = curr->Prev()->Start()->Position();
 					const Vector3d& p4 = curr->Prev()->Twin()->Prev()->Start()->Position();
 					w_local = Cot(p1, p2, p3) + Cot(p1, p4, p3);
-					color += w_local * (p3 - p1);
+					color += w_local * (p2 - p1);
 					area_sum += Area(p1, p2, p3);
 				}
 			}
@@ -645,7 +645,7 @@ void Mesh::ComputeVertexCurvatures()
 	 	}
 	 	else //process boundary vertices
 	 	{
-			Vector3d color_mean((vList[i]->H - min_curv) / (max_curv - min_curv), 0.5, 1 - (vList[i]->H - min_curv) / (max_curv - min_curv));
+			Vector3d color_mean((10*vList[i]->H - min_curv) / (max_curv - min_curv), 0.5, 1 - (10*vList[i]->H - min_curv) / (max_curv - min_curv));
 			vList[i]->SetColor(color_mean);
 	 	}
 	}

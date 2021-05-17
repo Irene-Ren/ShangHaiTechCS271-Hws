@@ -10,23 +10,4 @@ d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(316): 
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(433): warning C4018: '<': signed/unsigned mismatch
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(553): warning C4018: '<': signed/unsigned mismatch
 d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\mesh.cpp(638): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
-  Compiling...
-  main.cpp
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\main.cpp(199): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\main.cpp(200): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\main.cpp(201): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\main.cpp(202): warning C4244: 'argument': conversion from 'C' to 'GLfloat', possible loss of data
-          with
-          [
-              C=double
-          ]
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\main.cpp(346): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\main.cpp(352): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\main.cpp(521): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\main.cpp(534): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\main.cpp(542): warning C4018: '<': signed/unsigned mismatch
-d:\rigin_rain\classes\cs271\shanghaitechcs271-hws\hw5\meshviewer\main.cpp(544): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
-main.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
   pa1.vcxproj -> D:\Rigin_Rain\Classes\CS271\ShangHaiTechCS271-Hws\hw5\MeshViewer\Debug\pa1.exe
