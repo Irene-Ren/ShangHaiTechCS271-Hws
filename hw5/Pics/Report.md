@@ -105,6 +105,8 @@
 
 ##### Conclusions
 
+- From smoothing effect, in all, implicit performs better than explicit, cotangent performs better than uniform, thus it is usually cotangent implicit > cotangent explicit > uniform implicit > uniform explicit. BUT, if the mesh have some nasty faces in the beginning, like having very long sharp faces, the uniform performs better.
+
 - From Similarity with original Models, the cotangent methods (implicit and explicit) outperforms the uniform methods (implicit and explicit).
 
 - From stability, the mean methods (implicit and explicit) outperforms the cotangent methods (implicit and explicit), since cotangent weights may cause vertices exceeds other vertices around it and cause flip in normals and faces, causing faces to disappear.
@@ -115,5 +117,4 @@
 - From time, the explicit methods (uniform and cotangent) takes shorter time since it do not need to do loops to solve linear functions (uniform and cotangent).
 
 - For parameter choices, choose lambda in range [0,1], the bigger lambda chooses, the faster the mesh shrinks. (NOTE THAT: large lambda do not guarantee good results). For maxIterCnt in BCG, although I set it to be 10, but usually it needs only 1 iteration to get the result. For tolerance in BCG, it seems 10% of the initial error is enough.
-
 
